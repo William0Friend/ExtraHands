@@ -1,0 +1,54 @@
+﻿if (typeof (cookieComplianceSettings) === "undefined") {
+	cookieComplianceSettings = {};
+	// default titles
+	cookieComplianceSettings._consentRequiredTitle = "This content is blocked due to your cookie settings";
+	cookieComplianceSettings._cookiePreferencesTitle = "Cookie Preferences";
+}
+
+if (typeof (cookieCompliance) === "undefined") {
+	cookieCompliance = {};
+
+	cookieCompliance._settings = cookieComplianceSettings;
+
+	cookieCompliance.initializeContent = function () {
+		var elements = this.getElements();
+		for (var i = 0; i < elements.length; i++) {
+			this.initializeElement(elements[i]);
+		}
+	}
+
+	cookieCompliance.getElements = function () {
+		var elements = $("iframe[class*='optanon-category']");
+		return elements;
+	}
+
+	// TODO: check if we need to display cookie category names
+	cookieCompliance.getBlockedContentHtml = function (elem) {
+		var blockedContentClass = $(elem).data("consent-plh-class");
+		var blockedContentStyle = $(elem).data("consent-plh-style");
+		var html = "<div class='consent-required'";
+		if (blockedContentClass && blockedContentClass !== "") {
+			html += " class='" + blockedContentClass + "'";
+		}
+
+		if (blockedContentStyle && blockedContentStyle !== "") {
+			html += " style='" + blockedContentStyle + "'";
+		}
+
+		html += ">";
+		html += "<div>"
+		html += this._settings._consentRequiredTitle
+		html += "</div>";
+		html += "<button onclick='OneTrust.ToggleInfoDisplay()'>";
+		html += this._settings._cookiePreferencesTitle;
+		html += "</button>";
+		html += "</div>";
+		return html;
+	}
+
+	cookieCompliance.initializeElement = function (elem) {
+		var blockedHtml = this.getBlockedContentHtml(elem);
+		$(blockedHtml).insertAfter(elem);
+	}
+}
+

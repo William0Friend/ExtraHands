@@ -1,0 +1,395 @@
+﻿MealPlans = {
+	init: function (settings) {
+
+		if (settings.validation.flexibleDbPrice) {
+			$.validator.addMethod("flexible", function(value, element) {
+				return this.optional(element) || (Number.parseFloat(value) === Number.parseInt(value));
+			}, settings.validation.flexibleDbPrice.min);
+		}
+		
+		$('.mealPlanOptionCustom input').change(function() {
+			var $el = $(this);
+			$("input[name='Product.FlexibleDbPrice'").val(Number.parseInt($el.val()));
+		});
+
+		$('#mealPlanAddToCartModal form').validate({
+			rules: {
+				"UserOrderingInfo.Quantity": {
+					required: true
+				}
+			},
+			messages: {
+				"UserOrderingInfo.Quantity": settings.validation.quantity,
+				"FlexibleDbPriceVal": settings.validation.flexibleDbPrice
+			},
+			errorClass: "text-danger",
+			errorElement: "span",
+			errorPlacement: function (error, element) {
+				var containerForMessage = element.closest("div.row").find("div.field-validation-error");
+				if (!containerForMessage.length) {
+					containerForMessage = element.closest("div.option").find("div.field-validation-error");
+					if (!containerForMessage.length) {
+						containerForMessage = element.closest("input-wrapper").siblings("div.field-validation-error");
+					}
+				}
+				error.appendTo(containerForMessage);
+			},
+			highlight:function (element, errorClass) {
+				valError($(element));
+			},
+			unhighlight:function(element, errorClass){
+				valSuccess($(element));
+			},
+			onfocusout:function(element, errorClass){
+				var isValid = $(element).valid();
+				if (isValid == true) {
+					valSuccess($(element));
+				} else {
+					valError($(element));
+				}
+			}
+		});
+
+		$(".options-wrapper .mealPlanOptionCustom input[type='number']").bind('keyup input',
+			function () {
+				var $this = $(this);
+                var parent = $this.parent();
+				var $radiobutton = parent.find("input[type='radio'][value='" + $this.attr('id') + "']");
+                $radiobutton.prop("checked", true);
+
+                var customOptions = $('.options-wrapper .mealPlanOptionCustom');
+                var templateText = customOptions.data('text').replace('{0}', $this.val());
+                customOptions.attr('aria-label', templateText);
+            });
+
+		$(".options-wrapper label:not(.mealPlanOptionCustom) input[type='radio']").change(function () {
+			$(".options-wrapper .mealPlanOptionCustom input[type='number']").val("");
+			$("input[name='Product.FlexibleDbPrice'").val("");
+		});
+
+		$("#mealPlanAddToCartModal form").on("submit",
+			function (e) {
+				if ($("#mealPlanAddToCartModal form").valid()) {
+					var success = true;
+					var $selectOnes = $(".options-wrapper[data-type='selectOne']");
+					var notValid = [];
+					$selectOnes.each(
+						function () {
+							var showError = function($el) {
+								$el.find('div.warning').show();
+								var $fieldset = $el.closest('fieldset');
+								$fieldset.find('div.warning').show();
+								var describedById = $fieldset.data('aria-describedby');
+								$fieldset.attr('aria-describedby', describedById);
+								notValid.push($el.children()[0]);
+							};
+							var hideError = function($el) {
+								$el.find('div.warning').hide();
+								var $fieldset = $el.closest('fieldset');
+								$fieldset.find('div.warning').hide();
+								$fieldset.removeAttr('aria-describedby');
+							};
+							var $checked = $(this).find("input[type='radio']:checked");
+							var $flexAmount = $(this).next('.mealPlanOptionCustom');
+							if (!$checked.length && !$flexAmount.find("input").val()) {
+								showError($(this));
+								success = false;
+							} else {
+								hideError($(this));
+							}
+						});
+
+					if (!success) {
+						if (notValid.length > 0) {
+							$(notValid[0]).focus();
+						}
+						e.preventDefault();
+						return false;
+					} else {
+						$('#mealPlanAddToCartModal').modal('hide');
+					}
+				}
+			});
+
+		$("#mealPlanAddToCartModal").on("hidden.bs.modal",
+			function (e) {
+				currentAddtoCartLink.focus();
+			});
+
+		$('select[name="UserOrderingInfo.PatronId"]').on('change', function () {
+			var $option = $(this).find(":selected");
+			var firstName = $option.data('first-name');
+			var lastName = $option.data('last-name');
+
+			$('#UserOrderingInfo_FirstName').val(firstName);
+			$('#UserOrderingInfo_LastName').val(lastName);
+		});
+
+		$().addHandlersToCustomInputs();
+
+		if (typeof (gaEcommerce) !== 'undefined') {
+			gaEcommerce.gaProductDetailAction();
+			gaEcommerce.gaSendEventUXClick("add to cart modal");
+		}
+		if (typeof (gaGtag) !== 'undefined') {
+			gaGtag.viewProduct();
+			gaGtag.uxClickEvent("add to cart modal");
+		}
+	},
+
+	setValError: function (id, message) {
+		var span = $("span[data-valmsg-for=\"" + id + "\"]");
+		if (span && span.length > 0) {
+			$(span).html(message);
+			if (message && message != "") {
+				$(span).removeClass("field-validation-valid");
+				$(span).addClass("field-validation-no-valid");
+			} else {
+				$(span).removeClass("field-validation-no-valid");
+				$(span).addClass("field-validation-valid");
+			}
+		}
+	},
+
+    handlerPaypalMessages: function (config) {
+        console.log("config", config);
+        var calculateVariantsPrice = function (variants) {
+            var variantPrice = config.variants.items.reduce(function (sum, v) {
+                return v.checked ? sum + v.PredefinedDbPrice : sum;
+            }, 0);
+
+            return variantPrice;
+        };
+
+        var calculateOptionsPrice = function (options) {
+            var price = 0;
+            var ModifierType = {
+                YesNo: 0,
+                SelectOne: 1,
+                SelectMany: 2,
+                Text: 4,
+            };
+            options.forEach(function (m) {
+                switch (m.ModifierType) {
+                    case ModifierType.SelectOne:
+                    case ModifierType.SelectMany:
+                        price += m.Variants.reduce(function (sum, v) {
+                            return v.checked ? sum + v.VariantPrice : sum;
+                        }, 0);
+                        break;
+                    case ModifierType.YesNo:
+                    case ModifierType.Text:
+                        price += m.checked ? m.ModifierPrice : 0;
+                        break;
+                }
+            });
+
+            return price;
+        };
+
+        var calculatePrice = function () {
+            var variantPrice = calculateVariantsPrice(config.variants.items);
+            if (variantPrice === 0) variantPrice = config.productPrice.value;
+
+            var optionsPrice = calculateOptionsPrice(config.options.items);
+
+            var price = variantPrice + optionsPrice;
+            return price * config.quantity.value;
+        };
+        var showNewPrice = function () {
+            var newPrice = calculatePrice();
+
+            setTimeout(function () {
+                document
+                    .querySelector(config.paypalElement)
+                    .setAttribute(config.paypalDataAmount, newPrice);
+            }, 1000);
+        };
+        var setCheckedForOption = function ($divWithDataIds, checked) {
+            var mid = $divWithDataIds.data("modifierId");
+            var vid = $divWithDataIds.data("variantId");
+            var modifier = config.options.items.filter(function (m) {
+                return m.ModifierId == mid;
+            });
+            if (modifier.length) {
+                var variant = modifier[0].Variants.filter(function (v) {
+                    return v.VariantId == vid;
+                });
+                if (variant.length) {
+                    variant[0].checked = checked;
+                }
+            }
+        };
+
+        var setCheckedForModifier = function ($divWithDataIds, checked) {
+            var mid = $divWithDataIds.data("modifierId");
+            var modifier = config.options.items.filter(function (m) {
+                return m.ModifierId == mid;
+            });
+            if (modifier.length) {
+                modifier[0].checked = checked;
+            }
+        };
+
+        var refreshChecked = function () {
+            $(config.variants.selectorVariants).each(function () {
+                var $div = $(this);
+                var checkedOptionId = $div.find("input").val();
+                var variants = config.variants.items;
+                var item = variants.filter(function (v) {
+                    return v.Id == checkedOptionId;
+                });
+                if (item.length) {
+                    var variant = item[0];
+                    var checked = $div.attr("aria-checked").toLowerCase() === "true";
+                    variant.checked = checked;
+                }
+
+                $div.change(showNewPrice);
+            });
+
+            $(config.options.selectorSelects).each(function () {
+                var $div = $(this).closest("[aria-checked]");
+                var checked = $div.attr("aria-checked").toLowerCase() === "true";
+                var selectType = $div.parent().data("type");
+                switch (selectType) {
+                    case "selectOne":
+                    case "selectMany":
+                        setCheckedForOption($div, checked);
+                        break;
+                    default:
+                        setCheckedForModifier($div, checked);
+                }
+            });
+
+            $(config.options.selectorText).each(function () {
+                var $el = $(this);
+                var $div = $el.parent();
+                var checked = !!$el.val();
+                setCheckedForModifier($div, checked);
+            });
+
+            $(config.quantity.selector).each(function () {
+                config.quantity.value = $(this).val();
+            });
+        };
+        $(config.variants.selectorFlexible).change(function () {
+            var $el = $(this);
+            var checkedOptionId = $el.prop("id");
+            var variants = config.variants.items;
+            var item = variants.filter(function (v) {
+                return v.Id == checkedOptionId;
+            });
+            if (item.length) {
+                var variant = item[0];
+                if (!variant.checked) {
+                    variants.forEach(function (v) {
+                        v.checked = false;
+                    });
+                    variant.checked = true;
+                }
+
+                variant.PredefinedDbPrice = Number.parseFloat($el.val());
+                $("input[name='Product.FlexibleDbPrice'").val(
+                    Number.parseInt($el.val())
+                );
+            }
+
+            showNewPrice();
+        });
+        var observerConfig = {
+            attributes: true,
+            attributeFilter: ["aria-checked"],
+        };
+
+        var selectorMutationHandler = function (mutationList) {
+            $(mutationList).each(function () {
+                self._selectChanged(this.target);
+            });
+        };
+
+        var variantsMutationHandler = function (mutationList) {
+            $(mutationList).each(function () {
+                self._variantChanged(this.target);
+            });
+        };
+
+        var self = this;
+        self._optionsObserver = new MutationObserver(selectorMutationHandler);
+        self._variantsObserver = new MutationObserver(variantsMutationHandler);
+
+        $(config.options.selectorSelects).each(function () {
+            self._optionsObserver.observe(this, observerConfig);
+        });
+
+        $(config.variants.selectorVariants).each(function () {
+            self._variantsObserver.observe(this, observerConfig);
+        });
+
+        self._selectChanged = function (elem) {
+            var $el = $(elem);
+            var $div = $el.closest("[aria-checked]");
+            var checked = $div.attr("aria-checked").toLowerCase() === "true";
+            var selectType = $div.parent().data("type");
+
+            switch (selectType) {
+                case "selectOne":
+                    if (checked) {
+                        var mid = $div.data("modifierId");
+                        var modifier = config.options.items.filter(function (m) {
+                            return m.ModifierId == mid;
+                        });
+                        if (modifier.length) {
+                            modifier[0].Variants.forEach(function (v) {
+                                v.checked = false;
+                            });
+                        }
+                        setCheckedForOption($div, true);
+                    }
+                    break;
+                case "selectMany":
+                    setCheckedForOption($div, checked);
+                    break;
+                default:
+                    setCheckedForModifier($div, checked);
+            }
+
+            showNewPrice();
+        };
+
+        self._variantChanged = function (elem) {
+            var $el = $(elem);
+            var checkedOptionId = $el.find("input").val();
+            var variants = config.variants.items;
+            var item = variants.filter(function (v) {
+                return v.Id == checkedOptionId;
+            });
+            if (item.length) {
+                var variant = item[0];
+
+                variants.forEach(function (v) {
+                    v.checked = false;
+                });
+                variant.checked = true;
+            }
+
+            showNewPrice();
+        };
+
+        $(config.options.selectorText).change(function () {
+            var $el = $(this);
+            var $div = $el.parent();
+            var checked = !!$el.val();
+            setCheckedForModifier($div, checked);
+
+            showNewPrice();
+        });
+
+        $(config.quantity.selector).change(function () {
+            config.quantity.value = $(this).val();
+            showNewPrice();
+        });
+
+        refreshChecked();
+    },
+}

@@ -1,0 +1,223 @@
+a.back-link {
+  margin-bottom: 0px; }
+
+@media (min-width: 768px) {
+  .account form .fullname {
+    display: flex; } }
+
+.account form .firstName,
+.account form .lastName {
+  margin-bottom: 1em; }
+
+.account form .firstName {
+  padding: 0; }
+  @media (min-width: 768px) {
+    .account form .firstName {
+      padding-right: 1em; } }
+
+.account form .lastName {
+  padding: 0; }
+  @media (min-width: 768px) {
+    .account form .lastName {
+      padding-left: 1em; } }
+
+.account .link-account {
+  /*SHOULD BE COMMENTED OR REMOVED*/
+  /*display: none;*/
+  margin-bottom: 3em;
+  text-align: center; }
+  .account .link-account a {
+    display: inline-block; }
+  .account .link-account p {
+    text-align: left; }
+
+.account .link-invitation {
+  margin: 2em 0;
+  text-align: center; }
+  .account .link-invitation p:last-child {
+    margin: 0; }
+  .account .link-invitation .btn {
+    margin-top: 0.5em; }
+
+.account__accounts .address {
+  float: left;
+  width: 100%; }
+
+.account__balance {
+  margin: 2em 0 1.5em; }
+  .account__balance li {
+    overflow: hidden;
+    padding: 0.5em 0; }
+    .account__balance li:first-child {
+      padding-top: 0; }
+    .account__balance li span {
+      float: left;
+      width: 50%; }
+      .account__balance li span:last-child {
+        text-align: right; }
+
+.account__close {
+  margin-top: 3em; }
+  @media (min-width: 486px) {
+    .account__close {
+      float: left;
+      width: 100%; } }
+  .account__close a {
+    color: #924326;
+    font-size: 1.25em; }
+
+.account__current h2 {
+  font-size: 32px;
+  line-height: 38px; }
+
+.account__current .btn {
+  margin: 0.5em auto 0;
+  min-width: 275px; }
+  .account__current .btn + .btn {
+    margin-top: 1em; }
+
+.account__current .content-wrapper {
+  margin: auto;
+  text-align: center; }
+  @media (min-width: 768px) {
+    .account__current .content-wrapper {
+      text-align: left; } }
+
+.account__current .selected-plan {
+  margin-top: 2.5em; }
+
+.account__idNumber {
+  font-size: 32px;
+  line-height: 38px;
+  margin-top: 0.5em; }
+
+.account__information h3 {
+  background: #ededed;
+  color: #6B6B6B;
+  font-weight: 600;
+  margin: 2em 0 0.75em;
+  padding: 0.33em 0.5em; }
+
+.account__accounts > div, .account__payment > div, .account__preferences > div, .account__profile > div {
+  overflow: hidden;
+  margin-bottom: 1em; }
+  .account__accounts > div > span, .account__payment > div > span, .account__preferences > div > span, .account__profile > div > span {
+    float: left;
+    width: 50%; }
+    .account__accounts > div > span + span, .account__payment > div > span + span, .account__preferences > div > span + span, .account__profile > div > span + span {
+      text-align: right; }
+
+.account__acceptLink {
+  margin-top: 14px; }
+  .account__acceptLink input {
+    margin-top: 0em !important; }
+
+.account__resend input {
+  margin-top: 0em !important; }
+
+.account__update input {
+  margin-top: 0em !important; }
+
+.cancel__link {
+  display: inline-flex;
+  margin-right: 32px;
+  justify-content: center;
+  font-weight: bolder; }
+  @media screen and (min-width: 320px) {
+    .cancel__link {
+      width: 100%; } }
+  @media screen and (min-width: 768px) {
+    .cancel__link {
+      width: 95.1406px; } }
+
+.clearAll {
+  display: inline-block;
+  padding-left: 8px; }
+  .clearAll a {
+    font-size: larger; }
+  @media (min-width: 320px) {
+    .clearAll {
+      margin-top: 0px;
+      margin-bottom: 0px;
+      clear: both;
+      float: left; } }
+  @media (min-width: 486px) {
+    .clearAll {
+      margin-top: 10px;
+      margin-bottom: 25px;
+      clear: both;
+      float: left; } }
+
+.family-links li {
+  overflow: hidden;
+  padding: 0.5em 0; }
+  .family-links li:first-child {
+    padding-top: 0; }
+  .family-links li a {
+    float: right; }
+
+.family-links .disclaimer {
+  margin: 0; }
+
+.invitation__description {
+  margin-top: 35px; }
+
+@media (min-width: 486px) {
+  #lowBalanceAlertsForm .emailName {
+    width: 55%; } }
+
+#lowBalanceNotificationOptionsDiv {
+  max-width: 440px; }
+  #lowBalanceNotificationOptionsDiv #disableNotificationsInput {
+    border: 1.3px solid rgba(153, 153, 153, 0.54);
+    float: left; }
+    @media (min-width: 320px) {
+      #lowBalanceNotificationOptionsDiv #disableNotificationsInput {
+        width: 100%; } }
+    @media (min-width: 768px) {
+      #lowBalanceNotificationOptionsDiv #disableNotificationsInput {
+        width: 50%; } }
+
+#noId:target .account__current {
+  display: none; }
+
+#noId:target .link-account {
+  display: block; }
+
+.remove__link {
+  display: inline-flex;
+  justify-content: center;
+  margin-right: 32px; }
+  @media screen and (min-width: 320px) {
+    .remove__link {
+      width: 100%; } }
+  @media screen and (min-width: 768px) {
+    .remove__link {
+      width: 95.1406px; } }
+
+#toggleLowBalanceNotificationModal {
+  cursor: pointer;
+  display: none;
+  padding-left: 60px; }
+  #toggleLowBalanceNotificationModal.js-show {
+    display: block; }
+
+#toggleLowBalanceNotificationModal {
+  font-weight: 500;
+  margin-top: 1em; }
+  #toggleLowBalanceNotificationModal.js-show {
+    display: block; }
+
+ul.balanceList {
+  margin-bottom: 2em; }
+  ul.balanceList .balance {
+    display: inline-block;
+    position: relative;
+    width: 100%; }
+    ul.balanceList .balance > span {
+      left: 0;
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%); }
+    ul.balanceList .balance + .balance {
+      margin-top: 1em; }

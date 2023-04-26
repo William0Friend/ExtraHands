@@ -1,0 +1,14 @@
+﻿var hideControlClass = "hidden-control";
+function hideContols(selector) {
+	$(selector).addClass(hideControlClass);
+};
+
+function hideControls(selector) {
+	$(selector).addClass(hideControlClass);
+};
+
+function imgControls(selector, name) {
+	$(selector).replaceWith(function () {
+		return '<div class="noImage"><div class="imageText">' + name + '</div></div>';
+	});
+}

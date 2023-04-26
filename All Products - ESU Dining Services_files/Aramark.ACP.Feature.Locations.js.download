@@ -1,0 +1,387 @@
+(function ($) {
+	$('.location__sortLinks .status').on('click', function (e) {
+		e.preventDefault();
+
+		var status = $(this).data('status');
+
+		$('.locations .location').each(function () {
+			$(this).show();
+		});
+
+		$('.locations .location').each(function () {
+			var locationStatus = $(this).data('locationstatus');
+
+			if (status === locationStatus) {
+				$(this).show();
+			} else {
+				$(this).hide();
+			}
+		});
+	});
+	$('.location__sortLinks .type').on('click', function (e) {
+		e.preventDefault();
+		var type = $(this).data('type');
+
+		$('.locations .location').each(function () {
+			$(this).show();
+		});
+
+		if (type === 'all') {
+			return;
+		} else {
+			$('.locations .location').each(function () {
+				var locationType = $(this).data('locationtype');
+
+				if (type === locationType) {
+					$(this).show();
+				} else {
+					$(this).hide();
+				}
+			});
+		}
+	});
+
+	$(".location__filter > .content-wrapper").keydown(function (e) {
+		if (e.key === '27' || e.key === 'Escape') {
+			$(this).parent().children('button').click().focus();
+		}
+	});
+
+	$(".location__filter > button").keydown(function (e) {
+		if (e.key === '27' || e.key === 'Escape') {
+			var parent = $(this).parent();
+
+			if (parent.hasClass('js-active')) {
+				parent.removeClass('js-active');
+				$(this).attr('aria-expanded', false);
+				$('#allergensSpecialDietsButton').removeClass('js-active');
+			}
+		}
+	});
+
+	$('.location__filter > button').on('click', function (e) {
+		var parent = $(this).parent();
+
+		if (parent.hasClass('js-active')) {
+			parent.removeClass('js-active');
+			$(this).attr('aria-expanded', false);
+			$('#allergensSpecialDietsButton').removeClass('js-active');
+		} else {
+			$('.location__filter').removeClass('js-active');
+			$('.location__filter > button').attr('aria-expanded', false);
+			$('#allergensSpecialDietsButton').removeClass('js-active');
+			$(this).attr('aria-expanded', true);
+			parent.addClass('js-active');
+		}
+
+		if (e.originalEvent) e.originalEvent.isHandledByChildTab = true;
+	});
+
+	$('.location__filter.allergens, .location__filter.specialDiets, .location__filter.allergensSpecialDiets, .location__filter.mealCalculator').on('keyup', function (e) {
+		if (event.keyCode === 13) {
+			var parent = $(this);
+
+			if (parent.hasClass('js-active')) {
+				parent.removeClass('js-active');
+				$(this).attr('aria-expanded', false);
+				$('#allergensSpecialDietsButton').removeClass('js-active');
+			} else {
+				$('.location__filter').removeClass('js-active');
+				$('.location__filter > button').attr('aria-expanded', false);
+				$('#allergensSpecialDietsButton').removeClass('js-active');
+				$(this).attr('aria-expanded', true);
+				parent.addClass('js-active');
+			}
+
+			if (e.originalEvent) e.originalEvent.isHandledByChildTab = true;
+		}
+	});
+
+	//* Toggle allergen and special diet filters on mobile
+	$('#allergensSpecialDietsButton').on('click', function (e) {
+		$('.location__filter').removeClass('js-active');
+		$(this).children('button').attr('aria-expanded', $(this).hasClass('js-active'));
+		$(this).toggleClass('js-active');
+		e.stopPropagation();
+	});
+
+	$('button.allergen, button.diet, button.category').on('click', function () {
+		var filter = $(this).data('filter');
+		if ($(this).hasClass('solid')) {
+
+			$(this).removeClass('solid');
+			$(this).attr('aria-pressed', false);
+
+			$('#allergensSpecialDietsFilter').find('.filter-buttons').find('.btn[data-filter="' + filter + '"]').removeClass('solid');
+			$('#allergensSpecialDietsFilter').find('.filter-buttons').find('.btn[data-filter="' + filter + '"]').attr('aria-pressed', false);
+
+
+			$('.selectedFilters').find('.btn[data-filter="' + filter + '"]').remove();
+		} else {
+			$(this).addClass('solid');
+			$(this).attr('aria-pressed', true);
+
+			$('#allergensSpecialDietsFilter').find('.filter-buttons').find('.btn[data-filter="' + filter + '"]').addClass('solid');
+			$('#allergensSpecialDietsFilter').find('.filter-buttons').find('.btn[data-filter="' + filter + '"]').attr('aria-pressed', true);
+		}
+	});
+
+	//* Hide location filters on 'body' click
+	$('body').on('click', function (e) {
+		var container = $('.location__filter');
+
+		//* if the target of the click isn't the container nor a descendant of the container
+		if ((!container.is(e.target) && container.has(e.target).length === 0) && (!$(e.target).parent().is('#allergensSpecialDietsButton'))) {
+			container.removeClass('js-active');
+			container.children('button').attr('aria-expanded', false);
+			$('#allergensSpecialDietsButton').attr('aria-expanded', false);
+			$('#allergensSpecialDietsButton').removeClass('js-active');
+		}
+	});
+
+	//* Scroll to menu section
+	function scrollToElement(e) {
+		e.preventDefault();
+
+		var target = $(this).prop('href');
+		var hash = target.split('#')[1];
+		var menusEl = $('#' + hash);
+
+		if (menusEl.length > 0) {
+			$('html, body').animate({
+				scrollTop: menusEl.offset().top
+			}, 500);
+		}
+	}
+
+	$('.banner .btn.scrollBtn').on('click', scrollToElement);
+
+	//* Add fixed date to top of page when scrolling over menus
+	if ($('#menu').length > 0) {
+		var distance = $('#menu').offset().top,
+			$window = $(window);
+
+		$window.scroll(function () {
+			if ($window.scrollTop() >= distance + $('#menu').height()) {
+				if ($('#menuFixedDateDiv').length === 0) {
+					$('#menu').clone().prop('id', 'menuFixedDateDiv').appendTo('body');
+					$('#menuFixedDateDiv .daily').append('<div id="menuFixedDaily"></div>');
+					$('#menuFixedDateDiv .daily span').clone().appendTo('#menuFixedDaily');
+					$('#menuFixedDateDiv .daily a').remove();
+				}
+			} else {
+				$('#menuFixedDateDiv').remove();
+			}
+		});
+	}
+
+	(function updateTips() {
+		var noFavBlock = $('.favorites__none').closest('li');
+		var locationsContainer = noFavBlock.closest('.locationsList');
+		var favLocations = locationsContainer.find('button.favIcon.js-active');
+		if (favLocations.length) {
+			noFavBlock.hide();
+		} else {
+			noFavBlock.show();
+		}
+	})();
+
+	if (window.LocationFilterBarContext && window.LocationFilterBarContext.MoveNoFavoritesToCorrectIndex) {
+		window.LocationFilterBarContext.MoveNoFavoritesToCorrectIndex = null;
+		window.MoveNoFavoritesToCorrectIndex();
+	}
+
+	$('#allergensSpecialDietsFilter .content-wrapper-aria .content-wrapper-parent .content-wrapper .content-bottom button.save').on('click', function () {
+		var parent = $(this).parent().parent().parent().parent().parent();
+		if (parent.hasClass('js-active')) {
+			parent.removeClass('js-active');
+			$(this).attr('aria-expanded', false);
+			$('#allergensSpecialDietsButton').removeClass('js-active');
+		}
+	});
+
+	$('#allergensFilter .content-wrapper .content-bottom .save, #dietsFilter .content-wrapper .content-bottom .save').on('click', function () {
+		var parent = $(this).parent().parent().parent();
+		if (parent.hasClass('js-active')) {
+			parent.removeClass('js-active');
+			$(this).attr('aria-expanded', false);
+			parent.children("button[id$='Button']").removeClass('js-active');
+		}
+	});
+
+	$('div.close').on('click', function () {
+		var parent = $(this).parent().parent();
+		if (parent.hasClass('js-active')) {
+			parent.removeClass('js-active');
+			$(this).attr('aria-expanded', false);
+			$('#allergensSpecialDietsButton').removeClass('js-active');
+		}
+	});
+
+})(jQuery);
+
+function GetCurrentHOP(currentHoursOfOperations, isFoodOrdering) {
+	var now = GetUserDate();
+	if (currentHoursOfOperations && currentHoursOfOperations.length > 0) {
+
+		var result = jQuery.grep(currentHoursOfOperations, function (hop) {
+			var hopStartTime = new Date(hop.UtcStartTime);
+			var hopEndTime = new Date(hop.UtcEndTime);
+
+			if (isFoodOrdering) {
+				hopStartTime = new Date(hop.OnlineStartTime);
+				hopEndTime = new Date(hop.OnlineEndTime);
+			}
+
+			return IsHopOpenedForDate(now, hopStartTime, hopEndTime, hop);
+		});
+
+		return result;
+	}
+
+	return [];
+}
+
+function IsHopOpenedForDate(now, hopStartTime, hopEndTime, hop) {
+	var isNowBetweenStartEnd = hopStartTime < hopEndTime && hopStartTime <= now && hopEndTime >= now;
+	var isNowAfterStartOrBeforeEnd = hopStartTime > hopEndTime && (hopStartTime <= now || hopEndTime >= now);
+	return hop.WeekDay === now.getDay() &&
+		((hopStartTime.getTime() === hopEndTime.getTime()) || isNowBetweenStartEnd || isNowAfterStartOrBeforeEnd);
+}
+
+function GetNearestOpeningTime(currentHoursOfOperations) {
+	var now = GetUserDate();
+	if (currentHoursOfOperations && currentHoursOfOperations.length > 0) {
+		var todaysMealPeriods = jQuery.grep(currentHoursOfOperations, function (element) {
+			return element.WeekDay === now.getDay()
+				&& new Date(element.UtcStartTime) > now;
+		});
+
+		if (todaysMealPeriods && todaysMealPeriods.length > 0) {
+			if (todaysMealPeriods.length === 1) {
+				return FormatTimeEN(todaysMealPeriods[0].LocalStartTime);
+			} else {
+				var sorted = todaysMealPeriods.sort(function (a, b) {
+					if (new Date(a.UtcStartTime) < new Date(b.UtcStartTime)) {
+						return -1;
+					} else if (new Date(a.UtcStartTime) > new Date(b.UtcStartTime)) {
+						return 1;
+					} else {
+						return 0;
+					}
+				});
+
+				return FormatTimeEN(sorted[0].LocalStartTime);
+			}
+		}
+	}
+
+	return null;
+}
+
+function GetUserDate() {
+	return new Date();
+}
+
+function UpdateHopForLocationSearchResult(openStatus, closeStatus, opensAt) {
+	$(".locationsearchitem").each(function (key, element) {
+		var hop = $(element).find("input[name=hopStatus]").val();
+		if (hop) {
+			var hopStatus = JSON.parse(hop);
+			var currentHop = GetCurrentHOP(hopStatus);
+			var container = $(element).find(".location__status");
+			var status = container.html();
+			if (currentHop && currentHop.length > 0) {
+				status += "<span class='open'>" + openStatus + "</span>";
+				var timePeriod = FormatTimePeriod(currentHop);
+				if (timePeriod) {
+					status += "<p class='hop'>" + timePeriod + "</p>";
+				}
+				container.html(status);
+			} else {
+				status += "<span class='closed'>" + closeStatus + "</span>";
+				var nearest = GetNearestOpeningTime(hopStatus);
+				if (nearest) {
+					status += "<p class='hop'>" + opensAt + nearest + "</p>";
+				}
+
+				container.html(status);
+			}
+		}
+	});
+}
+
+function FormatTimePeriod(hop) {
+	if (hop[0].LocalStartTime === hop[0].LocalEndTime) {
+		return hop[0].Period + " " + open24Hours;
+	}
+	return hop[0].Period + " "
+		+ FormatTimeEN(hop[0].LocalStartTime) + " - "
+		+ FormatTimeEN(hop[0].LocalEndTime);
+}
+
+function FormatTimeEN(time) {
+	return moment(time).utc().format('LT', 'en');
+}
+
+function GetTimeShift(utcDate, localDate) {
+	if (utcDate < localDate) {
+		return new moment(localDate).diff(new moment(utcDate), 'hours');
+	} else {
+		return new moment(utcDate).diff(new moment(localDate), 'hours') * (-1);
+	}
+}
+
+function MoveNoFavoritesToCorrectIndex() {
+	var targetIndex = 2;
+	var $visibleLocations = $('.locationList .locationsList > li:visible > div').parent();
+	var $noFavorites = $('.locationList .locationsList > li:visible > div.favorites__none').parent();
+	if ($visibleLocations.length >= 4) {
+		var noFavoritesIndex = $visibleLocations.index($noFavorites);
+		if (noFavoritesIndex < targetIndex) {
+			$($visibleLocations.get(noFavoritesIndex)).insertAfter($($visibleLocations.get(targetIndex)));
+		} else {
+			$($visibleLocations.get(noFavoritesIndex)).insertBefore($($visibleLocations.get(targetIndex)));
+		}
+		$noFavorites.show();
+	} else {
+		$noFavorites.hide();
+	}
+}
+
+// is called from menu using document.dispatchEvent with new CustomEvent('menuModeChanged', { detail: { mode, locationId, storeIds } })
+document.addEventListener('menuModeChanged',
+	function (e) {
+		var currentModeIsFoodOrdering = $('#locationHours').data('current-mode-is-foodordering');
+		var data = e.detail;
+		var requestedMode = data.mode.toLowerCase();
+		var foodOrderMode = 'FoodOrder'.toLowerCase();
+		if (requestedMode === foodOrderMode && !currentModeIsFoodOrdering ||
+			requestedMode !== foodOrderMode && currentModeIsFoodOrdering) {
+			if ($('#locationHops').length) {
+				$.get('/api/locations/LocationHOP',
+					data,
+					function(response) {
+						$('#locationHops').replaceWith(response);
+					});
+			}
+
+			if ($('#locationDetails').length) {
+				$.get('/api/locations/GetLocationDetails',
+					data,
+					function(response) {
+						$('#locationDetails').replaceWith(response);
+					});
+			}
+		}
+
+		if ($("#menuLegendContainer").length) {
+			$.get("/api/menus/GetMenuLegend",
+				data,
+				function(response) {
+					$("#menuLegendContainer").html(response);
+				}
+			);
+		}
+	}
+);

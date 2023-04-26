@@ -1,0 +1,79 @@
+﻿function AddToCartModal(data) {
+    var modal = $('#AddToCartModal');
+    if (modal) {
+        if (data) {
+            var errorMessage = '';
+
+            if (data.Errors) {
+                for (var i = 0; i < data.Errors.length; i++) {
+                    errorMessage += data.Errors[i] + ' ';
+                }
+            }
+
+            if (errorMessage != '') {
+                var div = $('<div></div>').html(errorMessage).addClass("warning message");
+                modal.find('p').after(div);
+            }
+            modal.find('p').html(data.msg);
+            modal.find('#cartBtnUrl').attr('href', data.cartUrl);
+			modal.find('#shoppingBtnUrl').attr('href', data.shoppingUrl);
+
+	        $.ajax({
+		        type: 'POST',
+		        url: '/api/checkout/BasketPreview',
+		        success: function (result) {
+					if (result) {
+				        $(".header-wrapper li.cart").html(result);
+			        }
+		        }
+	        });
+
+            if (data.isUpdateRequest && errorMessage == '') {
+                window.location = data.cartUrl;
+            }
+            else {
+                modal.modal('show');
+            }
+        }
+	}
+
+	if (typeof (gaEcommerce) !== 'undefined') {
+		gaEcommerce.gaAddToCartAction();
+		gaEcommerce.gaSendEventUXClick('add to cart');
+    }
+    if (typeof (gaGtag) !== 'undefined') {
+        gaGtag.addProductToCart();
+        gaGtag.uxClickEvent("add to cart");
+    }
+};
+
+function AddToCartOnBegin(sender, args) {
+	var utmParams = (window.utmManager || new UtmManager()).getSavedUtmParams();
+	for (var key in utmParams) {
+		args.data += "&" + [key] + "=" + utmParams[key];
+	}
+
+	var $mealPeriodId = $("#mealType");
+	if ($mealPeriodId.length > 0) {
+		args.data += "&PeriodId=" + $mealPeriodId.val();
+	}
+}
+
+(function($) {
+    $('#AddToCartModal a').bind('click',
+        function () {
+            //pass empty string to stay on current page
+            var url = $(this).attr('href');
+            if (url !== undefined && url !== '') {
+                window.location = url;
+            }
+        });
+    $('#AddToCartModal').on('hidden.bs.modal', function () {
+        $('#AddToCartModal').find('div.message').remove();
+    });
+
+	$("div[data-type=selectOne] .productOptions.option").click(function () {
+		$(this).closest(".options-wrapper").find(".warning").hide();
+	});
+
+})(jQuery);

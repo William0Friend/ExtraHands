@@ -1,0 +1,466 @@
+#rejectReason {
+  border-radius: 6px;
+  width: 100%;
+  height: 70px; }
+
+.paging .res-per-page .btn {
+  font-size: 14px; }
+
+.paging .res-per-page label {
+  display: inline; }
+
+.paging .res-per-page .btn {
+  min-width: unset;
+  display: inline; }
+
+.paging .res-per-page select {
+  width: auto;
+  display: inline-block; }
+
+.paging label {
+  font-size: 14px; }
+
+.paging .records {
+  width: 10%;
+  margin-top: 10px;
+  white-space: nowrap;
+  display: inline; }
+
+.paging .pages {
+  text-align: center;
+  margin-top: 1em; }
+
+.paging .num, .paging .next, .paging .prev {
+  cursor: pointer;
+  padding: 0 5px 0 3px; }
+
+@media (min-width: 992px) {
+  .paging .res-per-page {
+    float: right; } }
+
+.user-role-column {
+  display: inline-block;
+  width: 30%;
+  padding-right: 1em;
+  vertical-align: top; }
+  @media (max-width: 486px) {
+    .user-role-column {
+      display: block;
+      width: auto;
+      padding-right: 0;
+      padding-bottom: 1em; } }
+
+#dailyMenuSubscription {
+  padding: 10px; }
+  #dailyMenuSubscription input[type=text] {
+    width: 330px; }
+  #dailyMenuSubscription .eatingPlacesContainer {
+    max-height: 270px;
+    max-width: 330px;
+    display: block;
+    overflow-x: hidden;
+    overflow-y: auto;
+    margin-top: 10px;
+    margin-bottom: 10px; }
+
+.order-information .order-info {
+  margin-top: 1em; }
+
+.order-information h3.section-subtitle {
+  margin: 0.75em 0 0.5em !important;
+  padding-left: 0.2em;
+  clear: both; }
+
+.order-information .col-xs-12, .order-information .col-xs-6 {
+  padding: 0; }
+
+.order-information h3, .order-information h4, .order-information li {
+  padding: 0; }
+
+.order-information .order-item, .order-information .subtotal, .order-information .total, .order-information .payment-status, .order-information .billing-title, .order-information .ccNumber, .order-information .address-title {
+  font-weight: 600; }
+
+.order-information .address p {
+  margin: 0;
+  color: #404040; }
+
+.order-information .divider {
+  margin-top: 1.5em;
+  margin-bottom: 0.5em; }
+
+.order-information .items {
+  margin-top: 2em; }
+
+.order-information .payment {
+  margin-top: 1em; }
+
+.order-information .address-title {
+  padding-top: 2em;
+  clear: both; }
+
+.order-information .modifiers {
+  color: #404040; }
+
+.order-information .order-status {
+  color: #666666; }
+
+.order-information .section-title {
+  margin-bottom: 0; }
+
+.order-information .order-item {
+  color: black;
+  margin: 0; }
+
+.order-information .btn.outline {
+  position: relative;
+  top: -1em; }
+
+.order-information .margin-bot-1 {
+  margin-bottom: 1em; }
+
+.order-information .row {
+  display: flex;
+  padding: 0 15px; }
+  .order-information .row .col {
+    width: 50%; }
+
+.order-information .hide-when-small {
+  display: block;
+  float: right; }
+
+.order-information .hide-when-large {
+  display: none; }
+
+@media (max-width: 768px) {
+  .order-information .order-item-status-total, .order-information .orderPrice .row .col:last-child > span {
+    float: right; }
+  .order-information .col {
+    width: 100% !important;
+    margin: 0.25em 0; }
+  .order-information .hide-when-small {
+    display: none; }
+  .order-information .hide-when-large {
+    display: block; } }
+
+@media (max-width: 486px) {
+  .order-information .order-quantity, .order-information .order-item-status, .order-information .payment-status {
+    float: right;
+    text-align: right; }
+  .order-information .col {
+    width: 100% !important;
+    margin: 0.25em 0; }
+  .order-information .row .ccard {
+    width: 70% !important; }
+  .order-information .row .col.payment-status {
+    width: 30% !important; }
+  .order-information .hide-when-large span {
+    float: right; } }
+
+.order-information .installmentPlan .installmentPlanHeader {
+  align-items: center;
+  margin-bottom: 1em;
+  margin-top: 0.5em;
+  font-size: 18px;
+  font-weight: 600;
+  display: none; }
+  @media (min-width: 768px) {
+    .order-information .installmentPlan .installmentPlanHeader {
+      flex-flow: row nowrap;
+      margin-bottom: 0.75em;
+      display: block; } }
+  .order-information .installmentPlan .installmentPlanHeader .variableHeader {
+    text-align: center; }
+
+.order-information .installmentPlan .planGroup {
+  display: block;
+  margin-top: 0.5em; }
+  .order-information .installmentPlan .planGroup .itemDescription {
+    margin-bottom: 1em; }
+  .order-information .installmentPlan .planGroup .planItem {
+    align-items: flex-start;
+    display: flex;
+    flex-flow: row wrap;
+    margin-bottom: 1em;
+    justify-content: space-between;
+    text-align: center;
+    width: 100%; }
+    .order-information .installmentPlan .planGroup .planItem .itemField {
+      width: 33.3333%; }
+    .order-information .installmentPlan .planGroup .planItem:first-child .itemField::before {
+      display: block;
+      content: attr(title);
+      height: 44px;
+      margin-bottom: 0.75em;
+      text-transform: uppercase;
+      font-weight: 600; }
+      @media (min-width: 768px) {
+        .order-information .installmentPlan .planGroup .planItem:first-child .itemField::before {
+          display: none; } }
+  .order-information .installmentPlan .planGroup .itemDetails {
+    padding-left: 0;
+    padding-right: 0; }
+
+.order-information .viewPayments {
+  margin-top: 2em;
+  text-align: center; }
+
+.address-fields {
+  padding: 0; }
+  @media (max-width: 768px) {
+    .address-fields {
+      width: 100%; } }
+  .address-fields .switch {
+    margin: 0.5em 0 0 0;
+    padding: 0.5em 0 0 0; }
+
+#nativeLogin .input-wrapper.submit input.btn--solid {
+  float: left; }
+
+.orderHistory .table-responsive {
+  border: none; }
+
+#orderHistoryTable .order-date-short {
+  display: none; }
+
+#orderHistoryTable .order-date-normal {
+  display: inline; }
+
+@media (max-width: 768px) {
+  #orderHistoryTable {
+    font-size: 14px; }
+    #orderHistoryTable td, #orderHistoryTable th {
+      padding: .5em .3em; }
+    #orderHistoryTable span.order-date-short {
+      display: inline; }
+    #orderHistoryTable span.order-date-normal {
+      display: none; } }
+
+#viewItemModal .description {
+  margin-bottom: 1em; }
+  @media (min-width: 486px) {
+    #viewItemModal .description {
+      overflow: hidden; } }
+  #viewItemModal .description__content,
+  #viewItemModal .description .allergenList {
+    margin-top: 1em; }
+    @media (min-width: 486px) {
+      #viewItemModal .description__content,
+      #viewItemModal .description .allergenList {
+        float: left;
+        margin: 0;
+        padding-left: 1em;
+        width: 60%; } }
+  #viewItemModal .description__image {
+    float: left;
+    text-align: center; }
+    @media (min-width: 486px) {
+      #viewItemModal .description__image {
+        width: 40%; } }
+    #viewItemModal .description__image img {
+      width: 100%; }
+  #viewItemModal .description .allergenList {
+    display: block; }
+    @media (min-width: 768px) {
+      #viewItemModal .description .allergenList {
+        display: inline-block; } }
+    #viewItemModal .description .allergenList li {
+      display: inline-block;
+      width: 40px;
+      min-height: 40px; }
+      #viewItemModal .description .allergenList li:last-child {
+        margin: 0; }
+      #viewItemModal .description .allergenList li img {
+        width: 100%; }
+
+#viewItemModal .disclaimer {
+  font-size: 12px; }
+
+#viewItemModal .servedAt {
+  margin-bottom: 1em; }
+
+#viewItemModal .servingSize {
+  margin: 1em auto; }
+
+#viewItemModal .svg {
+  height: 24px;
+  width: 24px; }
+
+.nutritionCard li {
+  overflow: hidden;
+  padding: 0.5em 0; }
+  .nutritionCard li:first-child {
+    border: none; }
+  .nutritionCard li span {
+    float: right; }
+
+.nutritionCard ul {
+  margin-top: 0.5em; }
+  .nutritionCard ul li {
+    padding-left: 1em; }
+    .nutritionCard ul li:last-child {
+      padding-bottom: 0; }
+
+.menu__category .categoryName {
+  display: none; }
+
+.menu__item {
+  position: relative; }
+  .menu__item a {
+    cursor: pointer;
+    display: inline-block;
+    padding: 0.25em 0; }
+  .menu__item .item__info,
+  .menu__item .item__name {
+    font-size: 20px;
+    display: block; }
+  .menu__item .item__name {
+    margin-bottom: 0;
+    margin-top: 0;
+    width: calc(100% - 81px); }
+    .menu__item .item__name .viewItem {
+      padding: 0; }
+  .menu__item .item__selected {
+    display: none; }
+  .menu__item .item__details {
+    float: right;
+    padding-top: 10px; }
+  .menu__item.js-isSelected {
+    background: rgba(66, 139, 202, 0.135); }
+
+.menu__station .stationName {
+  color: #777;
+  font-weight: 600;
+  margin: 1em 0 0.3em; }
+
+.menu.daily .menu__item {
+  margin: 0 1.5%;
+  padding: 0.5em;
+  width: 97%;
+  padding-top: 10px; }
+  .menu.daily .menu__item .item__info {
+    margin-top: 4px;
+    padding-right: 25px; }
+  .menu.daily .menu__item .item__content {
+    display: block;
+    float: left;
+    width: 100%; }
+  .menu.daily .menu__item .item__variants {
+    color: #555;
+    text-align: right; }
+    .menu.daily .menu__item .item__variants .item__variant {
+      font-size: 14px; }
+  @media (min-width: 768px) {
+    .menu.daily .menu__item {
+      width: 30%; } }
+
+.menu.daily .menu__items {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: flex-start; }
+
+.menu.daily .menu__station:first-child .stationName {
+  margin-top: 0; }
+
+.menu.daily .menu__station .stationName {
+  padding: 0.33em 0.5em; }
+
+.menu.daily .menu__station .collapse-deemphasized-button {
+  margin: 0.5em 1.75em;
+  cursor: pointer;
+  border: 0;
+  padding: 0;
+  font-size: 14px; }
+
+.menu.daily .item__price {
+  float: right; }
+
+#orderDetailsButtons a svg {
+  margin: -6px; }
+
+#credit_card_description {
+  border: 1px solid rgba(153, 153, 153, 0.54);
+  border-radius: 6px;
+  outline: none;
+  padding: 0.5em 1em 0.5em 1em;
+  width: 100%; }
+
+.minus-container {
+  min-width: 1em;
+  text-align: right;
+  color: red; }
+
+.summary-value {
+  display: flex;
+  flex-direction: row; }
+
+.summary-red-text {
+  color: red; }
+
+.refer-friend-link {
+  color: #666;
+  border-radius: 6px;
+  padding: 0.5em 1em 0.5em 1em;
+  margin-top: 16px;
+  display: none; }
+
+.refer-friend-help-title {
+  font-weight: bold; }
+
+.refer-friend-help-text {
+  font-style: italic; }
+
+.manage-account-right-panel .btn {
+  margin-top: 1em;
+  margin-bottom: 1em; }
+
+.manage-account-right-panel .btn + .btn {
+  margin-top: 0; }
+
+.auto-reload-settings h2 {
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 0.5em;
+  margin-top: 0.5em !important;
+  line-height: 40px; }
+
+.auto-reload-settings .required-help {
+  margin-top: 1em; }
+
+.auto-reload-settings .select-wrapper select:focus {
+  border-style: solid;
+  border-color: #3277b3;
+  border-width: 1px; }
+
+.auto-reload-settings .message {
+  margin: 0; }
+
+.auto-reload-settings .auto-reload-data label {
+  color: #000;
+  font-size: 16px;
+  line-height: 22px;
+  font-weight: normal; }
+
+.auto-reload-settings .auto-reload-data .trigger-content {
+  margin-left: 25px;
+  margin-bottom: 1em; }
+
+.auto-reload-settings .auto-reload-data .trigger-group + .trigger-group {
+  margin-top: 1em; }
+
+.auto-reload-settings .auto-reload-data input[type='text'], .auto-reload-settings .auto-reload-data select {
+  width: 150px; }
+
+.auto-reload-settings .auto-reload-data .payment-method select {
+  min-width: 320px; }
+
+.auto-reload-settings .auto-reload-data .select-wrapper select {
+  border-radius: 6px;
+  border-width: 1px;
+  border-style: solid; }
+
+.auto-reload-settings .auto-reload-data .select-wrapper.js-error select {
+  border-color: #c20 !important; }
+
+.auto-reload-settings .auto-reload-data .select-wrapper.js-success select {
+  border-color: #070 !important; }

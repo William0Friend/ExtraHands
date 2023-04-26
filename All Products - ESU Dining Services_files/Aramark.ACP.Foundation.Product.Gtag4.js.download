@@ -1,0 +1,424 @@
+﻿window.gaGtag = window.gaGtag || {};
+
+window.isGaGtag4Enabled = !!window.gtag;
+
+(function () {
+    var _CUSTOM_ANALYTICS_EVENTS = {
+        NAME: {
+            FYF: 'find_your_fit_completion',
+            ACQ: 'acquisition',
+            EXT_CLICK: 'external_purchase_button_click',
+            CUSTOM_CLICK: 'custom_click',
+        },
+        CATEGORY: {
+            FORM: 'forms',
+            UX: 'ux_click',
+        },
+        LABEL: {
+            CLIENT_PORTAL: 'client_portal',
+        },
+    };
+    var _ECOMMERCE_ACTION = {
+        VIEW_ITEM_LIST: 'view_item_list',
+        SELECT_ITEM: 'select_item',
+        VIEW_ITEM: 'view_item',
+        ADD_TO_CART: 'add_to_cart',
+        VIEW_CART: 'view_cart',
+        REMOVE_FROM_CART: 'remove_from_cart',
+        BEGIN_CHECKOUT: 'begin_checkout',
+        PURCHASE: 'purchase',
+    };
+
+    var DEFAULT_CURRENCY = 'USD';
+
+    function _logger(...args) {
+        if (console && console.log && gaGtag._isLog) {
+            console.log(...args);
+        }
+    }
+
+    function _context() {
+        return window.gaGtag.context || {};
+    }
+
+    $.extend(gaGtag, {
+        _isLog: !!window.gaGtag._isLog,
+
+        enableLog: function () {
+            this._isLog = true;
+        },
+
+        disableLog: function () {
+            this._isLog = false;
+        },
+
+        /**
+         * @name sendEvent
+         * @description This method runs a custom event.
+         * @param {string} name This parameter is event action/name.
+         * @param {object} options This parameter is required.
+         * @param {string} nameEvent This parameter is not required, but is needed for logging.
+         *
+         * @url https://developers.google.com/analytics/devguides/collection/ga4/events?client_type=gtag
+         */
+        sendEvent: function (name, options, nameEvent) {
+            if (!window.isGaGtag4Enabled) {
+                _logger('[GA4] The analytics collection tool is disabled or not available.');
+                return;
+            }
+
+            const callbackGtag = (tag) => {
+                if (this._isLog) {
+                    _logger(`[${tag}] ================================================`);
+                    _logger('[GA4] An event called: ', nameEvent);
+                    _logger('[GA4] Event name: ', name);
+                    _logger('[GA4] Event options: ', options);
+                    _logger(`[${tag}] ================================================`);
+                }
+            };
+            gtag('event', name, {
+                ...options,
+                event_callback: callbackGtag,
+            });
+        },
+
+        // ** start - Ecommerce events **
+        /**
+         * @name viewProductsList
+         * @description This method raises an event indicating that some content was shown to the user.
+         * @param {{
+         * item_id: string;
+         * item_name: string;
+         * affiliation?: string;
+         * price?: number;
+         * quantity?: number;
+         * }[]} products This parameter is an array of all products on the page.
+         * @param {{
+         * item_list_id?: string;
+         * item_list_name?: string;
+         * }?} options This parameter is not required. (But it's better to send)
+         *
+         * @url https://developers.google.com/analytics/devguides/collection/ga4/reference/events?client_type=gtag#view_item_list
+         */
+        viewProductsList: function (products, options = {}) {
+            if (window.isGaGtag4Enabled && (!Array.isArray(products) || !products[0].item_id || !products[0].item_name)) {
+                _logger('[ViewProductsList] The passed parameter must be an array!');
+                return;
+            }
+
+            this.sendEvent(
+                _ECOMMERCE_ACTION.VIEW_ITEM_LIST,
+                {
+                    ...options,
+                    items: products,
+                },
+                'ViewProductsList',
+            );
+        },
+
+        /**
+         * @name clickOnProduct
+         * @description This method raises an event indicating that an item has been selected from the list.
+         * @param {{
+         * item_id: string;
+         * item_name: string;
+         * affiliation?: string;
+         * price?: number;
+         * quantity?: number;
+         *  }} product This parameter is required.
+         *
+         * @param {{
+         * item_list_id?: string;
+         * item_list_name?: string;
+         *  }?} category This parameter is not required. (But it's better to send)
+         *
+         * @url https://developers.google.com/analytics/devguides/collection/ga4/reference/events?client_type=gtag#select_item
+         */
+        clickOnProduct: function (product, category) {
+            if (window.isGaGtag4Enabled && (!product || !product.item_id || !product.item_name)) {
+                _logger('[ClickOnProduct] Unable to send event, missing required parameters or their properties');
+                return;
+            }
+
+            this.sendEvent(
+                _ECOMMERCE_ACTION.SELECT_ITEM,
+                {
+                    ...category,
+                    items: [product],
+                },
+                'ClickOnProduct',
+            );
+        },
+
+        /**
+         * @name viewProduct
+         * @description This method raises an event indicating that some content was shown to the user.
+         * @param {{
+         * item_id: string;
+         * item_name: string;
+         * affiliation?: string;
+         * price?: number;
+         * quantity?: number;
+         * }} product This parameter is required. This parameter is either passed in or taken from the context loaded on the page beforehand.
+         *
+         * @url https://developers.google.com/analytics/devguides/collection/ga4/reference/events?client_type=gtag#view_item
+         */
+        viewProduct: function (product = _context().product) {
+            if (window.isGaGtag4Enabled && (!product || !product.item_id || !product.item_name)) {
+                _logger('[ViewProduct] Unable to send event, missing required parameters or their properties');
+                return;
+            }
+           
+            this.sendEvent(
+                _ECOMMERCE_ACTION.VIEW_ITEM,
+                {
+                    currency: DEFAULT_CURRENCY,
+                    value: product.price || null,
+                    items: [product],
+                },
+                'ViewProduct',
+            );
+        },
+
+        /**
+         * @name addProductToCart
+         * @description This method triggers an event indicating that the item has been added to the shopping cart.
+         * @param {{
+         * item_id: string;
+         * item_name: string;
+         * affiliation?: string;
+         * price?: number;
+         * quantity?: number;
+         *  }} product This parameter is either passed in or taken from the context loaded on the page beforehand.
+         *
+         * @url https://developers.google.com/analytics/devguides/collection/ga4/reference/events?client_type=gtag#add_to_cart
+         */
+        addProductToCart: function (product = _context().product) {
+            if (window.isGaGtag4Enabled && (!product || !product.item_id || !product.item_name)) {
+                _logger('[AddProductToCart] Unable to send event, missing required parameters or their properties');
+                return;
+            }
+            
+            this.sendEvent(
+                _ECOMMERCE_ACTION.ADD_TO_CART,
+                {
+                    currency: DEFAULT_CURRENCY,
+                    value: product.price || null,
+                    items: [product],
+                },
+                'AddProductToCart',
+            );
+        },
+
+        /**
+         * @name viewCart
+         * @description This method triggers an event indicating that a user viewed their cart.
+         * @param {{
+         * item_id: string;
+         * item_name: string;
+         * affiliation?: string;
+         * price?: number;
+         * quantity?: number;
+         *  }} products This parameter is either passed in or taken from the context loaded on the page beforehand.
+         *
+         * @param {string?} amount
+         * @url https://developers.google.com/analytics/devguides/collection/ga4/reference/events?client_type=gtag#view_cart
+         */
+        viewCart: function (products, amount) {
+            if (
+                window.isGaGtag4Enabled &&
+                (!Array.isArray(products) ||
+                    !products.length ||
+                    !products[0].item_id ||
+                    !products[0].item_name)
+            ) {
+                _logger('[ViewCart] Unable to send event, missing required parameters or their properties');
+                return;
+            }
+                
+            this.sendEvent(
+                _ECOMMERCE_ACTION.VIEW_CART,
+                {
+                    currency: DEFAULT_CURRENCY,
+                    value: amount,
+                    items: products,
+                },
+                'ViewCart',
+            );
+        },
+
+        /**
+         * @name removeProductFromCart
+         * @description This method raises an event indicating that an item was removed from a cart.
+         * @param {{
+         * item_id: string;
+         * item_name: string;
+         * affiliation?: string;
+         * price?: number;
+         * quantity?: number;
+         * }} product This parameter is required.
+         *
+         * @url https://developers.google.com/analytics/devguides/collection/ga4/reference/events?client_type=gtag#remove_from_cart
+         */
+        removeProductFromCart: function (product) {
+            if (window.isGaGtag4Enabled && (!product || !product.item_id || !product.item_name)) {
+                _logger(
+                    '[RemoveProductFromCart] Unable to send event, missing required parameters or their properties',
+                );
+                return;
+            }
+                
+            this.sendEvent(
+                _ECOMMERCE_ACTION.REMOVE_FROM_CART,
+                {
+                    currency: DEFAULT_CURRENCY,
+                    value: product.price || null,
+                    items: [product],
+                },
+                'RemoveProductFromCart',
+            );
+        },
+
+        /**
+         * @name beginCheckout
+         * @description This method triggers an event indicating that a user has begun a checkout.
+         * @param {{
+         * value: string;
+         * coupon?: string;
+         * }} info This parameter is required.
+         * @param {{
+         * item_id: string;
+         * item_name: string;
+         * affiliation?: string;
+         * price?: number;
+         * quantity?: number;
+         *  }} products This parameter is an array of all products on the page.
+         *
+         * @url https://developers.google.com/analytics/devguides/collection/ga4/reference/events?client_type=gtag#purchase
+         */
+        beginCheckout: function (info, products) {
+            if (window.isGaGtag4Enabled) {
+                if (!info || !info.value) {
+                    _logger(
+                        '[BeginCheckout:[info]] Unable to send event, missing required parameters or their properties',
+                    );
+                    return;
+                }
+
+                if (
+                    !Array.isArray(products) ||
+                    !products.length ||
+                    !products[0].item_id ||
+                    !products[0].item_name
+                ) {
+                    _logger(
+                        '[BeginCheckout:[products]] Unable to send event, missing required parameters or their properties',
+                    );
+                    return;
+                }
+            }
+
+            this.sendEvent(
+                _ECOMMERCE_ACTION.BEGIN_CHECKOUT,
+                {
+                    currency: DEFAULT_CURRENCY,
+                    ...info,
+                    items: products,
+                },
+                'BeginCheckout',
+            );
+        },
+
+        /**
+         * @name purchase
+         * @description This method triggers an event indicating that one or more items is purchased by a user.
+         * @param {{
+         * transaction_id: string;
+         * value: string;
+         * tax?: number;
+         * affiliation?: string;
+         * }} info This parameter is required.
+         * @param {{
+         * item_id: string;
+         * item_name: string;
+         * affiliation?: string;
+         * price?: number;
+         * quantity?: number;
+         *  }} products This parameter is either passed in or taken from the context loaded on the page beforehand.
+         *
+         * @url https://developers.google.com/analytics/devguides/collection/ga4/reference/events?client_type=gtag#purchase
+         */
+        purchase: function (info, products = _context().products) {
+            if (window.isGaGtag4Enabled) {
+                if (!info || !info.transaction_id || !info.value) {
+                    _logger(
+                        '[Purchase:[info]] Unable to send event, missing required parameters or their properties',
+                    );
+                    return;
+                }
+
+                if (!Array.isArray(products) || !products[0].item_id || !products[0].item_name) {
+                    _logger(
+                        '[Purchase:[products]] Unable to send event, missing required parameters or their properties',
+                    );
+                    return;
+                }  
+            }
+
+            this.sendEvent(
+                _ECOMMERCE_ACTION.PURCHASE,
+                {
+                    currency: DEFAULT_CURRENCY,
+                    ...info,
+                    items: products,
+                },
+                'Purchase',
+            );
+        },
+        // ** end - Ecommerce events **
+
+        // ** Custom events **
+        uxClickEvent: function (eventLabel) {
+            this.sendEvent(
+                _CUSTOM_ANALYTICS_EVENTS.NAME.CUSTOM_CLICK,
+                {
+                    event_category: _CUSTOM_ANALYTICS_EVENTS.CATEGORY.UX,
+                    event_label: eventLabel,
+                },
+                'UXClickEvent',
+            );
+        },
+
+        externalPurchaseEvent: function () {
+            this.sendEvent(
+                _CUSTOM_ANALYTICS_EVENTS.NAME.EXT_CLICK,
+                {
+                    event_category: _CUSTOM_ANALYTICS_EVENTS.CATEGORY.UX,
+                    event_label: _CUSTOM_ANALYTICS_EVENTS.LABEL.CLIENT_PORTAL,
+                },
+                'ExternalPurchaseEvent',
+            );
+        },
+
+        acquisitionFormEvent: function (is_full = false) {
+            this.sendEvent(
+                _CUSTOM_ANALYTICS_EVENTS.NAME.ACQ,
+                {
+                    event_category: _CUSTOM_ANALYTICS_EVENTS.CATEGORY.FORM,
+                    is_full,
+                },
+                'AcquisitionFormEvent',
+            );
+        },
+
+        findYourFitEvent: function () {
+            this.sendEvent(
+                _CUSTOM_ANALYTICS_EVENTS.NAME.FYF,
+                {
+                    event_category: _CUSTOM_ANALYTICS_EVENTS.CATEGORY.FORM,
+                },
+                'FindYourFitEvent',
+            );
+        },
+    });
+})();

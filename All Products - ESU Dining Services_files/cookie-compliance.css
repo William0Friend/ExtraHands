@@ -1,0 +1,18 @@
+iframe[data-src] {
+  display: none; }
+
+div.consent-required {
+  display: none;
+  min-height: 150px;
+  background-color: #425573;
+  color: #fff;
+  text-align: center;
+  padding: 20px;
+  margin: 5px; }
+  div.consent-required button {
+    background-color: #2C3D4F;
+    border: 2px solid #fff;
+    margin: 10px auto; }
+
+iframe[data-src] + div.consent-required {
+  display: block !important; }

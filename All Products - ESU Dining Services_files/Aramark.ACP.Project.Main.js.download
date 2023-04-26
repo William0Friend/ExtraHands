@@ -1,0 +1,97 @@
+(function ($) {
+    //* Calculate logo height
+    $(document).ready(function () {
+        var logoH = document.querySelector('.logo img').naturalHeight;
+        var logoW = document.querySelector('.logo img').naturalWidth;
+
+        if (logoH >= logoW) {
+            $('.logo').addClass('vert');
+        } else {
+            $('.logo').addClass('horz');
+		}
+
+		//commented due to Sangeetha's request until appearing appropriate images.
+		//addToHomescreen({
+		//	//debug: true,				// activate debug mode in ios emulation (use 'android', 'ios' or true to emulate a behaviour)
+		//	skipFirstVisit: true,		// show at first access
+		//	startDelay: 5,				// display the message right away
+		//	privateModeOverride: true,  // show the message in private mode
+		//	maxDisplayCount: 1    
+		//});
+    });
+
+    //* Locations
+    //* Location Filtering
+    function toggleMobileLocationsFilters() {
+        var bodyWidth = $('body').outerWidth();
+
+        if (bodyWidth < 751) {
+            $('.locationFilters').addClass('js-mobile');
+        } else {
+            $('.locationFilters').removeClass('js-mobile');
+        }
+    }
+
+    //* On page load
+    toggleMobileLocationsFilters();
+
+    //* On window resize
+    $(window).resize(function () {
+        toggleMobileLocationsFilters();
+    });
+
+    $('.locationFilters a').on('click', function (e) {
+        e.preventDefault();
+
+        var type = $(this).data('type');
+
+        if (type === 'address') {
+            $('.locationFilters + .locationAddress').show();
+        } else {
+            $('.locationFilters + .locationAddress').hide();
+        }
+
+        $('.locationFilters li').removeClass('js-selected');
+        $('.locationFilters li a').removeAttr("aria-current");
+
+        $(this).parent().addClass('js-selected');
+        $(this).attr("aria-current", "location");
+
+        $(this).closest('.locationFilters').toggleClass('js-show');
+    });
+
+    //* My Account alerts toggle
+    $('#lowBalanceNotificationToggle').on('change', function () {
+        if ($(this).is(':checked')) {
+            $('#toggleLowBalanceNotificationModal').addClass('js-show');
+        } else {
+            $('#toggleLowBalanceNotificationModal').removeClass('js-show');
+        }
+    });
+
+    //* Tabs
+    $('.tab').on('click', function (e) {
+        if (e && e.originalEvent && e.originalEvent.isHandledByChildTab) return;
+        var parent = $(this).closest('.tabList');
+        var tabGroup = $(this).data('tabgroup');
+        var target = '#' + $(this).data('target');
+
+        if (!$(this).hasClass('js-noSelect')) {
+            parent.find('.tab').removeClass('js-active');
+        }
+
+        $(this).addClass('js-active');
+
+        $('[data-tabgroup="' + tabGroup + '"]').not('.tab').hide();
+
+        $(target).show();
+    });
+
+    $('[data-toggle="tooltip"]').tooltip();  
+
+    //* Modal autofocus support
+    $(document).on('shown.bs.modal', '.modal', function () {
+        $(this).find('[autofocus]').focus();
+    });
+
+})(jQuery);

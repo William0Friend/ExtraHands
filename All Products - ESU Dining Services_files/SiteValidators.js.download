@@ -1,0 +1,706 @@
+﻿(function($) {
+	//Fix the range validator methods
+	jQuery.extend(jQuery.validator.methods, {
+		range: function(value, element, param) {
+			var val = parseFloat(value.replace(/,/g, ""));
+			return this.optional(element) || (val >= param[0] && val <= param[1]);
+		}
+	});
+
+	$.isNullDateOrDefaultMaskValue = function (value) {
+		return typeof(value) === "undefined" || value === null || value === "" || value === "__/__/____" || value.trim() === "";
+	};
+
+	$.atlasRequiredValidate = function(validator, value, element, params, noValidate) {
+		var result = true;
+		var root = $(element).parent();
+		if ($(element).parents("div.checkbox_list").length > 0) {
+			root = $(element).parents("div.checkbox_list");
+		}
+		if (root != null && $(root).hasClass("checkbox_list")) {
+			if (noValidate || $(root).find("ul input:checked").length > 0) {
+				$(root).removeClass("input-validation-error");
+				result = true;
+			} else {
+				$(root).addClass("input-validation-error");
+				result = false;
+			}
+		} else if (!noValidate) {
+			if (validator == null) {
+				validator = $(element).closest("form").validate();
+			}
+			result = jQuery.validator.methods.required.call(validator, value, element, params);
+			if (root != null && $(root).hasClass("picker")) {
+				if (result) {
+					$(root).removeClass("input-validation-error");
+				} else {
+					$(root).addClass("input-validation-error");
+				}
+			}
+			if ($(element).closest("td.atlasPhoneColumn").length > 0) {
+				if ($.isNullPhoneOrDefaultMaskValue(value)) {
+					result = false;
+				}
+			}
+		}
+
+		if (params.softwarning) {
+			var softBlock = $(element);
+			if (!$(softBlock).hasClass("soft-warning")) {
+				softBlock = $(element).parents(".soft-warning");
+			}
+			if (softBlock != null && softBlock.length > 0) {
+				if (result) {
+					$(softBlock).removeClass("soft-error");
+				} else {
+					$(softBlock).addClass("soft-error");
+				}
+			}
+		}
+
+		return result || params.softwarning;
+	};
+
+
+	//Atlas required validator
+	$.validator.addMethod("atlasrequired", function(value, element, params) {
+		return $.atlasRequiredValidate(this, value, element, params, false);
+	});
+	$.validator.unobtrusive.adapters.add("atlasrequired", ["softwarning"], function (options) {
+		if (options.params != null && options.params.softwarning != null) {
+			options.params.softwarning = options.params.softwarning.toString().toLowerCase() == "true";
+		} else {
+			options.params.softwarning = false;
+		}
+		options.rules["atlasrequired"] = options.params;
+		options.messages["atlasrequired"] = options.message;
+
+		$(document).ready(function() {
+			markSoftWarning(options);
+			var root = $(options.element).parent();
+			if (root != null && $(root).hasClass("checkbox_list")) {
+				checkboxlist_itemclick(options.element);
+			}
+		});
+	});
+
+	function markSoftWarning(options) {
+		if (options.params.softwarning) {
+			var softBlock = $(options.element);
+			var markElement = false;
+			if ($(options.element).parents(".checkbox_list").length > 0) {
+				softBlock = $(options.element).parents(".checkbox_list");
+			}
+			else if ($(options.element).parents(".picker").length > 0) {
+				softBlock = $(options.element).parents(".picker");
+			}
+			else if ($(options.element).parents(".numericField").length > 0) {
+				softBlock = $(options.element).parents(".numericField");
+				markElement = true;
+			}
+
+			$(softBlock).addClass("soft-warning");
+			if (markElement) {
+				$(options.element).addClass("soft-warning-element");
+			} else {
+				$(options.element).addClass("soft-warning");
+				
+			}
+		}
+	}
+
+	$.fn.getOtherPropertyFormElement = function (element, otherProperty) {
+		var otherPropertyElement = $(this).find("#" + otherProperty);
+		if (otherPropertyElement == null || otherPropertyElement.length == 0) {
+			var elName = $(element).attr("name");
+			var elArrayPrefix = elName.substring(0, elName.lastIndexOf(".") + 1);
+			otherPropertyElement = $(this).find("[name='" + elArrayPrefix + otherProperty + "']");
+		}
+		return otherPropertyElement;
+	}
+
+	$.fn.getCheckboxState = function () {
+		var result = false;
+		if (this.length > 0) {
+
+			var getCheckState = function (element) {
+				var checked = $(element).prop("checked");
+				//== true for jquery <= 1.4.4
+				//== checked for jquery > 1.4.4
+				return checked == true || checked == "checked" ? true : false;
+			};
+
+			var type = $(this).attr("type");
+			if (type != null)
+				type = type.toLowerCase();
+			switch (type) {
+				case "checkbox":
+					result = getCheckState($(this));
+					break;
+				case "radio":
+					result = getCheckState($(this));
+					break;
+				case "hidden":
+					result = $(this).val().toLowerCase() == "true";
+					break;
+			}
+		}
+		return result;
+	};
+
+	//Atlas required if
+	$.requiredIfValidate = function (validator, value, element, params, validateAfterOnReady) {
+		var targetValues = params.targetvalues;
+		var isRequired = true;
+		$.each(params.dependentpropertyes, function (i, dependentproperty) {
+			var eachIsRequired = false;
+			var el = $(params.form).getOtherPropertyFormElement(element, dependentproperty);
+			var type = $(el).prop("type");
+			if (type == "checkbox") {
+				var state = $(el).getCheckboxState();
+				if (requiredIfValueExistInTargetValue(el, state, targetValues, true, type)) {
+					eachIsRequired = true;
+				}
+			} else if (type == "hidden" || type == "password" || type == "text" || type == "textarea" || type == "select-one" || type == "radio") {
+				if (type == "radio") {
+					el = $(el).filter(":checked");
+				}
+				var val = $(el).val();
+				if (requiredIfValueExistInTargetValue(el, val, targetValues, false, type)) {
+					eachIsRequired = true;
+				}
+			}
+			isRequired = isRequired && eachIsRequired;
+		});
+		var elementId = $(element).attr("id");
+		var root = $(element).parent();
+		if (root != null && $(root).hasClass("checkbox_list")) {
+			elementId = $(root).attr("id");
+		}
+		var lbl = $(params.form).find("label[for=" + elementId + "]");
+		if (isRequired) {
+			$(lbl).removeClass("disable-required");
+		} else {
+			$(lbl).addClass("disable-required");
+		}
+
+		if (validateAfterOnReady != null && !validateAfterOnReady)
+			return true;
+
+		var isValid = $.atlasRequiredValidate(validator, value, element, params, !isRequired);
+		var result = isRequired ? isValid : true;
+		return result;
+	};
+
+	function requiredIfValueExistInTargetValue(element, val, targetValues, toLower, elementType) {
+		var isExist = false;
+		var hiddenTrue = false;
+		var valLower = val == null ? "" : val.toString().toLowerCase();
+		if (elementType == "hidden" && valLower == "true") {
+			hiddenTrue = true;
+		}
+		$.each(targetValues, function (i, v) {
+			var vLower = v.toString().toLowerCase();
+			var valEach = val;
+			if (toLower || (hiddenTrue && vLower == "true")) {
+				v = vLower;
+				valEach = valLower;
+			}
+			if ($.isNullDateOrDefaultMaskValue(valEach)) {
+				valEach = "";
+			}
+			if (v == "FieldMustBeNull" && valEach.length < 1) {
+				isExist = true;
+				return false;
+			}
+			if (v == "FieldMustBeNotNull" && valEach.length > 0) {
+				isExist = true;
+				return false;
+			}
+			if (v == valEach) {
+				isExist = true;
+				return false;
+			}
+		});
+		return isExist;
+	}
+
+	$.validator.addMethod("atlasrequiredif", function (value, element, params) {
+		return $.requiredIfValidate(this, value, element, params);
+	});
+	$.validator.unobtrusive.adapters.add("atlasrequiredif", ["dependentpropertyes", "targetvalues", "softwarning"], function (options) {
+		options.params.dependentpropertyes = $.parseJSON(options.params.dependentpropertyes);
+		options.params.targetvalues = $.parseJSON(options.params.targetvalues);
+		if (options.params != null && options.params.softwarning != null) {
+			options.params.softwarning = options.params.softwarning.toString().toLowerCase() == "true";
+		} else {
+			options.params.softwarning = false;
+		}
+		options.rules["atlasrequiredif"] = options.params;
+		options.messages["atlasrequiredif"] = options.message;
+		options.params.form = options.form;
+		$(document).ready(function () {
+			markSoftWarning(options);
+			$.requiredIfValidate(null, $(options.element).val(), options.element, options.params, false);
+		});
+	});
+
+
+	//Atlas Date Great than comparison validator
+	$.validator.addMethod("atlasdategreatthancomparison", function (value, element, params) {
+		var otherPropertyElement = $(params.form).getOtherPropertyFormElement(element, params.otherproperty);
+		var otherPropertyValue = $(otherPropertyElement).val();
+		if ($.isNullDateOrDefaultMaskValue(value) || $.isNullDateOrDefaultMaskValue(otherPropertyValue)) {
+			return true;
+		}
+		var d1 = Date.parse(otherPropertyValue);
+		var d2 = Date.parse(value);
+
+		if ($(element).parents(".portalTimepicker").length > 0) {
+			d1 = $.parseTime(otherPropertyValue);
+			d2 = $.parseTime(value);
+
+			var now = new Date();
+			var day = now.getDate();
+			d1.setDate(day);
+			d2.setDate(day);
+		}
+
+		var validRange = true;
+		$.validator.messages.atlasdategreatthancomparison = params.errormessagelessthanorequal;
+		if (params.maxdaysrange != null && params.maxdaysrange > 0) {
+			var date1 = new Date(d1);
+			var date2 = date1.addDays(params.maxdaysrange);
+			var d3 = date2.getTime();
+			validRange = d3 >= d2;
+			if (!validRange) {
+				$.validator.messages.atlasdategreatthancomparison = params.errormessagemaxdaysrange;
+			}
+		}
+		return validRange && (params.allowequaldates ? d1 <= d2 : d1 < d2);
+	});
+	$.validator.unobtrusive.adapters.add("atlasdategreatthancomparison", ["otherproperty", "allowequaldates", "maxdaysrange", "errormessagelessthanorequal", "errormessagemaxdaysrange"], function (options) {
+		options.params.allowequaldates = options.params.allowequaldates.toString().toLowerCase() == "true";
+		options.params.maxdaysrange = parseInt(options.params.maxdaysrange) - 1;
+		if (options.params.maxdaysrange < 0)
+			options.params.maxdaysrange = 0;
+		options.rules["atlasdategreatthancomparison"] = options.params;
+		if (options.message != null) {
+			$.validator.messages.atlasdategreatthancomparison = options.message;
+		}
+		options.params.form = options.form;
+		$(document).ready(function() {
+			$.enableDatepicker();
+			var otherPropertyElement = $(options.form).getOtherPropertyFormElement(options.element, options.params.otherproperty);
+			$.initDateRange(otherPropertyElement, options.element, options.params.allowequaldates, null, null, options.params.maxdaysrange);
+		});
+	});
+
+
+	//Atlas Great than comparison validator
+	$.validator.addMethod("atlasgreatthancomparison", function (value, element, params) {
+		var otherPropertyElement = $(params.form).getOtherPropertyFormElement(element, params.otherproperty);
+		var otherPropertyValue = $(otherPropertyElement).val();
+		if (value == null || otherPropertyValue == null || value == "" || otherPropertyValue == "") {
+			return true;
+		}
+		var v1 = parseFloat(otherPropertyValue);
+		var v2 = parseFloat(value);
+		return params.allowequal ? v1 <= v2 : v1 < v2;
+	});
+	$.validator.unobtrusive.adapters.add("atlasgreatthancomparison", ["otherproperty", "allowequal"], function (options) {
+		options.params.allowequal = options.params.allowequal.toString().toLowerCase() == "true";
+		options.rules["atlasgreatthancomparison"] = options.params;
+		options.messages["atlasgreatthancomparison"] = options.message;
+		options.params.form = options.form;
+	});
+
+
+	//Atlas money range validator
+	$.validator.addMethod("atlasmoneyrange", function(value, element, params) {
+		if (!value) return true;
+		if (accounting.unformat(value) >= params[0] && accounting.unformat(value) <= params[1]) {
+			return true;
+		} else {
+			return false;
+		}
+	});
+	$.validator.unobtrusive.adapters.addMinMax("atlasmoneyrange", "minlength", "maxlength", "atlasmoneyrange");
+
+
+	//Atlas Not Equal To Validation
+	$.validator.unobtrusive.adapters.add("atlasnotequalto", ["ids", "checkemptyvalues"], function (options) {
+		options.rules["atlasnotequalto"] = options.params;
+		options.messages["atlasnotequalto"] = options.message;
+		options.params.form = options.form;
+	});
+	$.validator.addMethod("atlasnotequalto", function(value, element, params) {
+		// params here will equal { ids: 'value' }
+		var ids = params.ids.split(";");
+		var checkemptyvalues = params.checkemptyvalues;
+		for (var i in ids) {
+			var otherPropertyElement = $(params.form).getOtherPropertyFormElement(element, ids[i]);
+			var otherPropertyValue = $(otherPropertyElement).val();
+			if ((checkemptyvalues === "True" || value !== "") && value == otherPropertyValue) {
+				return false;
+			}
+		}
+		return true;
+	});
+
+
+	//Portal string length
+	$.validator.addMethod("portalstringlength", function (value, element, params) {
+		return params.maximumlength >= value.length;
+	});
+	$.validator.unobtrusive.adapters.add("portalstringlength", ["maximumlength"], function (options) {
+		options.params.maximumlength = parseInt(options.params.maximumlength);
+		var prefixLength = $(options.element).attr("prefixLength");
+		if (prefixLength) {
+			options.params.maximumlength -= parseInt(prefixLength);
+		}
+		options.rules["portalstringlength"] = options.params;
+		options.messages["portalstringlength"] = options.message;
+		$(document).ready(function() {
+			$(options.element).limit_textarea(options.params.maximumlength);
+		});
+	});
+
+
+	//Unique identifier
+	var uniquevalidating = false;
+	var lastUniqueValue = "";
+	$.validator.addMethod("uniqueidentifier", function(value, element, params) {
+		if (value == params.originalvalue || uniquevalidating)
+			return true;
+		var elementForm = $(element).closest("form");
+		var submitedOn = $(elementForm).attr("firedon");
+		var formsubmitted = (submitedOn == undefined) ? false : submitedOn == "submit";
+		if (params.validateonceonsubmit.toLowerCase() == 'true' && !formsubmitted) {
+			var isValid = !($(element).hasClass("input-validation-error"));
+			if (!isValid && (lastUniqueValue != value))
+				isValid = true;
+
+			lastUniqueValue = value;
+			return isValid;
+		}
+		var isUnique = true;
+		uniquevalidating = true;
+		$.ajax(
+		{
+			url: params.url,
+			async: false,
+			type: 'POST',
+			data: JSON.stringify({ name: element.id, value: value }),
+			dataType: 'json',
+			contentType: 'application/json; charset=UTF-8',
+			success: function(data, textStatus, jqXHR) {
+				uniquevalidating = false;
+				isUnique = data;
+			},
+			error: function(objAJAXRequest, strError) {
+				uniquevalidating = false;
+				throw new Error(strError);
+			}
+		});
+		return isUnique;
+	});
+	$.validator.unobtrusive.adapters.add("uniqueidentifier", ["originalvalue", "url", "validateonceonsubmit"], function(options) {
+		options.params["originalvalue"] = options.element.value;
+		options.rules["uniqueidentifier"] = options.params;
+		if (options.message)
+			options.messages["uniqueidentifier"] = options.message;
+	});
+
+	//External Unique identifier
+	$.validator.addMethod("externaluniqueidentifier", function (value, element, params) {
+		if (value == element.defaultValue)
+			return true;
+		var result = window[params.javascriptmethod](element);
+		return result;
+	});
+	$.validator.unobtrusive.adapters.add("externaluniqueidentifier", ["originalvalue", "javascriptmethod"], function (options) {
+		options.rules["externaluniqueidentifier"] = options.params;
+		if (options.message)
+			options.messages["externaluniqueidentifier"] = options.message;
+	});
+
+	//Hierarchy tree required
+	$.validator.addMethod("hierarchytreerequired", function(value, element, params) {
+		var treeId = $(element).val();
+		var checkedItems = HierarchyTree.GetCheckedItems(treeId);
+		var ul = $(element).siblings("#HierarchyTree_" + treeId).find("ul:first");
+		if (checkedItems.length > 0) {
+			$(ul).removeClass("input-validation-error");
+			return true;
+		} else {
+			$(ul).addClass("input-validation-error");
+			return false;
+		}
+	});
+	$.validator.unobtrusive.adapters.add("hierarchytreerequired", function(options) {
+		options.rules["hierarchytreerequired"] = options.params;
+		options.messages["hierarchytreerequired"] = options.message;
+	});
+
+	//RichTextEditor required
+	$.validator.addMethod("richtextboxrequired", function (value, element, params) {
+		var editorId = $(element).val();
+		var richObj = $find(editorId);
+		if (richObj.get_InnerText().length > 0) {
+			$(richObj._control).removeClass("input-validation-error");
+			return true;
+		} else {
+			$(richObj._control).addClass("input-validation-error");
+			return false;
+		}
+	});
+	$.validator.unobtrusive.adapters.add("richtextboxrequired", function (options) {
+		options.rules["richtextboxrequired"] = options.params;
+		options.messages["richtextboxrequired"] = options.message;
+
+		var editorId = $(options.element).val();
+		var richObj = $find(editorId);
+
+		richObj.add_ClientSideKeyUp(function(sender, args) {
+			var $frm = $(options.element).parents("form");
+			if ($frm.valid()) {
+				$frm.enableDialogSubmitButtons();
+			} else {
+				$frm.disableDialogSubmitButtons();
+			}
+		});
+	});
+
+    // Date range validator
+	$.validator.addMethod("atlasdaterange", function (value, element, params) {
+	    return (!value.trim()) || (Date.parse(value) >= Date.parse(params.minumumdate) && Date.parse(value) <= Date.parse(params.maximumdate));
+	});
+
+	$.validator.unobtrusive.adapters.add(
+       "atlasdaterange", ['minumumdate', 'maximumdate'], function (options) {
+           var params = {
+               minumumdate: options.params.minumumdate,
+               maximumdate: options.params.maximumdate
+           };
+           options.rules["atlasdaterange"] = params;
+           options.messages["atlasdaterange"] = options.message;
+       });
+
+	//Numeric field - returm always true
+	$.validator.addMethod("numericfield", function(value, element, params) {
+		return true;
+	});
+	$.validator.unobtrusive.adapters.add("numericfield", function(options) {
+		$(document).ready(function() {
+			setTimeout(function() {
+				$(options.element).closest("form").addTriggersToJqueryValidate();
+				$(options.element).elementValidation(function(element, result) {
+					if (result) {
+						$(element).parents(".numericField").removeClass("input-validation-error");
+					} else {
+						$(element).parents(".numericField").addClass("input-validation-error");
+					}
+				});
+				$(options.element).closest("form").formValidation(function(element, result) {
+					if (result) {
+						$(element).find(".numericField").removeClass("input-validation-error");
+					} else {
+						$(element).find(".numericField").each(function() {
+							if ($(this).find("input.input-validation-error").length > 0) {
+								$(this).addClass("input-validation-error");
+							}
+						});
+					}
+				});
+			}, 200);
+		});
+	});
+
+
+	//Timepicker
+	$.validator.addMethod("timepicker", function(value, element, params) {
+		var validTime = value.length == "" || value.match(/^(0?[1-9]|1[012])(:[0-5]\d)(:[0-5]\d)? [APap][mM]$/);
+		validTime = Boolean(validTime);
+		return validTime;
+	});
+	$.validator.unobtrusive.adapters.add("timepicker", function(options) {
+		options.rules["timepicker"] = options.params;
+		options.messages["timepicker"] = options.message;
+	});
+
+	//Illegalchars
+	$.validator.addMethod("atlasillegalchars", function(value, element, params) {
+		var result = true;
+		$(params.chars.split("")).each(function(idx, el) {
+			result = !(value.indexOf(el) > -1);
+			return result; // break
+		});
+		return result;
+	});
+	$.validator.unobtrusive.adapters.add("atlasillegalchars", ["chars"], function(options) {
+		options.params.chars = options.params.chars.toString().toLowerCase();
+		options.rules["atlasillegalchars"] = options.params;
+		options.messages["atlasillegalchars"] = options.message;
+		$(document).ready(function () {
+			$(options.element).on("keypress", function (e) {
+				var inputchar = String.fromCharCode(e.which);
+				var atlasillegalchars = $(this).attr("data-val-atlasillegalchars-chars");
+				return !(atlasillegalchars.indexOf(inputchar) > -1);
+			});
+		});
+	});
+
+	//Is Barcode validator
+	$.validator.addMethod("isbarcode", function(value, element, params) {
+		value = value.toString();
+		var isValid = /^\d+$/.test(value);
+		if (isValid) {
+			switch (value.length) {
+				case params.upcelength:
+					isValid = IsValidBarcode(GonvertBarcodeUPCE2A(value, params.upcelength));
+					break;
+				case params.upcalength:
+					isValid = IsValidBarcode(value);
+					break;
+				default:
+					isValid = false;
+					break;
+			}
+		}
+		return isValid;
+	});
+	$.validator.unobtrusive.adapters.add("isbarcode", ["upcalength", "upcelength"], function (options) {
+		options.params.upcalength = parseInt(options.params.upcalength);
+		options.params.upcelength = parseInt(options.params.upcelength);
+		options.rules["isbarcode"] = options.params;
+		options.messages["isbarcode"] = options.message;
+		$(document).ready(function() {
+			$(options.element).keyup(function() {
+				$(this).val($(this).val().replace(/\D/g, ''));
+			});
+		});
+
+	});
+
+	jQuery.validator.addMethod("booleanmustbetrue", function (value, element, param) {
+		return element.checked;
+	});
+
+	jQuery.validator.unobtrusive.adapters.addBool("booleanmustbetrue");
+
+})(jQuery);
+
+function GonvertBarcodeUPCE2A(barcode, upceLength) {
+	barcode = barcode.toString();
+	if (barcode.length != upceLength) {
+		return "";
+	}
+	//middle 6 digits - N2 to N7
+	var middle = barcode.substring(1, 7);
+
+	var n1 = barcode[0];
+	var n8 = barcode[7];
+	var v1 = "";
+	var v2 = "";
+
+	var lastDigit = middle[middle.length - 1];
+	switch (lastDigit) {
+		//If N7 = 0 or 1 or 2 =>
+			//V1 = N2 & N3 & N7 & "00"
+			//V2 = "00" & N4 & N5 &N6
+		case "0":
+		case "1":
+		case "2":
+			v1 = barcode[1] + barcode[2] + barcode[6] + "00";
+			v2 = "00" + barcode[3] + barcode[4] + barcode[5];
+			break;
+		//If N7 = 3 =>
+			//V1 =  N2 & N3 & N4 & "00"
+			//V2 = "000" & N5 & N6
+		case "3":
+			v1 = barcode[1] + barcode[2] + barcode[3] + "00";
+			v2 = "000" + barcode[4] + barcode[5];
+			break;
+		//If N7 = 4 => 
+			//V1 = N2 & N3 & N4 & N5 & "0"
+			//V2 = "0000" & N6
+		case "4":
+			v1 = barcode[1] + barcode[2] + barcode[3] + barcode[4] + "0",
+			v2 = "0000" + barcode[5];
+			break;
+		//If N7 = 5, 6, 7, 8, or 9 =>
+			//V1 =  N2 & N3 & N4 & N5 & N6
+			//V2 = "0000" & N7
+		case "5":
+		case "6":
+		case "7":
+		case "8":
+		case "9":
+			v1 = barcode[1] + barcode[2] + barcode[3] + barcode[4] + barcode[5];
+			v2 = "0000" + barcode[6];
+			break;
+	}
+
+	//UPC-A value = N1 & V1 & V2 & N8.
+	var result = n1 + v1 + v2 + n8;
+
+	return result;
+}
+
+function IsValidBarcode(barcode) {
+	barcode = barcode.toString();
+	var result = false;
+	if (barcode.length > 0) {
+		var iSum = 0;
+		for (var i = 1; i <= barcode.length; i++) {
+			var iDigit = parseInt(barcode[i-1]);
+			if (i % 2 == 0) {
+				// even
+				iSum += iDigit * 1;
+			} else {
+				// odd
+				iSum += iDigit * 3;
+			}
+		}
+		result = iSum % 10 == 0;
+	}
+	return result;
+}
+
+function NumericChangeUpDown(el, dif) {
+	var input = $(el).parents(".numericField").find(".textBox input");
+	if (!$(input).isDisabled() && !$(input).isReadonly()) {
+		var val = $(input).maskMoney("unmasked")[0];
+
+		val = parseFloat(val.toString().replace(/,/g, ""));
+		if (isNaN(val))
+			val = 0;
+		var resultVal = val + parseInt(dif);
+
+		var rangeMin = parseFloat($(input).attr("data-val-atlasmoneyrange-min"));
+		var rangeMax = parseFloat($(input).attr("data-val-atlasmoneyrange-max"));
+
+		if (isNaN(rangeMin) && isNaN(rangeMax)) {
+			rangeMin = parseFloat($(input).attr("data-val-range-min"));
+			rangeMax = parseFloat($(input).attr("data-val-range-max"));
+		}
+
+		if (rangeMin != null && resultVal < rangeMin)
+			resultVal = rangeMin;
+		if (rangeMax != null && resultVal > rangeMax)
+			resultVal = rangeMax;
+
+		$(input).maskMoney("mask", resultVal);
+
+		var frm = $(input).closest("form");
+		if (!$(frm).hasAttr("noNumericTriggers")) {
+			$(input).trigger("keyup").trigger("change").focus();
+		}
+		if (frm != null && frm.length > 0 && $(frm).validate().element(input)) {
+			$(document).trigger("ChangeFildValue");
+		}
+
+		$(input).focus();
+	}
+}

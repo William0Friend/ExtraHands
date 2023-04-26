@@ -1,0 +1,122 @@
+.page-home section h2:first-child {
+  margin-top: 0; }
+
+.page-home .banner {
+  background-image: url("/project/main/assets/images/app-home.jpg"); }
+  .page-home .banner .sub-title {
+    position: relative; }
+    .page-home .banner .sub-title:after {
+      background-image: url("/project/main/assets/images/large-eating_made_easy@2x.png");
+      background-position: center;
+      background-repeat: no-repeat;
+      background-size: auto 100%;
+      bottom: -60%;
+      content: '';
+      left: 0;
+      margin: auto;
+      padding-bottom: 10%;
+      position: absolute;
+      right: 0;
+      width: 75%; }
+      @media screen and (min-width: 486px) {
+        .page-home .banner .sub-title:after {
+          left: auto;
+          right: -5%; } }
+      @media screen and (min-width: 768px) {
+        .page-home .banner .sub-title:after {
+          right: -7.5%; } }
+      @media screen and (min-width: 992px) {
+        .page-home .banner .sub-title:after {
+          bottom: -88%;
+          right: -6%; } }
+
+.page-home .cta.full-width {
+  background: #ededed;
+  margin-top: 4em;
+  padding: 3em 15px; }
+
+.page-home .section-title {
+  font-size: 3em;
+  font-weight: 600; }
+
+.locationAddress {
+  display: none;
+  margin: 1em auto 2em;
+  max-width: 500px; }
+  .locationAddress .input-wrapper {
+    border-radius: 0; }
+    .locationAddress .input-wrapper input,
+    .locationAddress .input-wrapper + button {
+      border: 1px solid #999;
+      padding: 0.25em 1em; }
+    .locationAddress .input-wrapper input {
+      border: none;
+      outline: none;
+      width: 100%; }
+    .locationAddress .input-wrapper + button {
+      background: none;
+      color: #3277b3;
+      border-top: none;
+      display: block;
+      text-align: left;
+      width: 100%; }
+      .locationAddress .input-wrapper + button .svg {
+        fill: #3277b3; }
+
+ul.locationFilters {
+  background: #ededed;
+  margin-bottom: 1em; }
+  @media (min-width: 768px) {
+    ul.locationFilters {
+      align-items: center;
+      background: none;
+      display: flex;
+      justify-content: center; } }
+  ul.locationFilters a {
+    border-radius: 6px;
+    display: block;
+    padding: 0.25em 1em; }
+    ul.locationFilters a.address {
+      padding-left: 0.5em;
+      color: #224F77; }
+    ul.locationFilters a.type {
+      color: #224F77; }
+    ul.locationFilters a.status {
+      color: #224F77; }
+  ul.locationFilters li {
+    margin: 0 0.5em;
+    position: relative;
+    text-align: center; }
+    @media (min-width: 768px) {
+      ul.locationFilters li {
+        text-align: left; }
+        ul.locationFilters li:first-child {
+          margin-left: 0; }
+        ul.locationFilters li:last-child {
+          margin-right: 0; } }
+    ul.locationFilters li.js-selected a {
+      background: #ededed; }
+  ul.locationFilters.js-mobile {
+    padding: 0.5em 1em; }
+    @media (min-width: 768px) {
+      ul.locationFilters.js-mobile {
+        padding: 0; } }
+    ul.locationFilters.js-mobile li:not(.js-selected) {
+      display: none; }
+    ul.locationFilters.js-mobile li.js-selected a:after {
+      content: url("/Project/Main/Assets/images/chevron-down.png");
+      display: inline-block;
+      margin-left: 0.25em;
+      position: relative;
+      top: 6px; }
+    ul.locationFilters.js-mobile.js-show {
+      padding: 1em; }
+      @media (min-width: 768px) {
+        ul.locationFilters.js-mobile.js-show {
+          padding: 0; } }
+      ul.locationFilters.js-mobile.js-show li {
+        padding: 0.25em 0; }
+  ul.locationFilters.js-show li {
+    display: block !important; }
+    ul.locationFilters.js-show li.js-selected a:after {
+      display: none; }

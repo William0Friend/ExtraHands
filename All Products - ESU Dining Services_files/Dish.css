@@ -1,0 +1,517 @@
+/*******Notes******/
+/* Updated 10/06/2020 */
+/*******Notes******/
+
+/*
+    Table of Contents:
+
+   ***** Features******
+    - Main
+    - Account
+    - Carousel
+    - Cart
+    - CheckOut
+    - DatesAndTimes
+    - Events
+    - Locations
+    - Meal Plans
+    - Menu
+    - Navigation
+    - News
+    - AlertNotifications
+    - Tables
+
+ *****End Features******
+
+ *****Global***********
+
+    - Main
+    - Banner
+    - Header Top
+    - Tabs
+
+*/
+
+/******************************************/
+/************Features*********************/
+/*****************************************/
+
+/*******Account******/
+
+a.signIn {
+    color: var(--primary-color) !important;
+}
+
+    a.signIn:active, a.signIn:focus, a.signIn:hover {
+        color: var(--secondary-color) !important;
+    }
+
+/***** End Account********/
+
+
+/********Carousel********/
+
+.carousel .arrow {
+    fill: var(--primary-color);
+}
+
+.carousel-wrapper.homepage {
+	background: #ededed;
+}
+
+/********End Carousel******/
+
+
+/********Cart******/
+
+.cart__quantity button:after, .cart__quantity button:before {
+    background: var(--primary-color);
+}
+
+.cart__promotionCode .svg {
+    fill: var(--primary-color);
+}
+
+    #paymentStudentAccountDiv label .svg {
+        fill: var(--primary-color);
+    }
+
+/********End Cart*******/
+
+
+/*********CheckOut******/
+
+.options-wrapper input:checked + .btn {
+	background: var(--secondary-color);
+	color: #fff;
+}
+
+.cart .cartSize {
+    background: var(--primary-color);
+    color: #fff;
+}
+
+
+.cartIcon-wrapper .cartItem__list a:active, .cartIcon-wrapper .cartItem__list a:focus, .cartIcon-wrapper .cartItem__list a:hover {
+        color: inherit;
+        background: var(--primary-color);
+}
+
+.cartItem span:first-child:after {
+    background: var(--primary-color);
+    color: #fff;
+}
+
+
+.cart__quantity button:after, .cart__quantity button:before {
+    background: var(--primary-color);
+}
+
+.cart__promotionCode .svg {
+    fill: var(--primary-color);
+}
+
+    #paymentStudentAccountDiv label .svg {
+        fill: var(--primary-color);
+    }
+
+/*********End CheckOut******/
+
+/*********DatesAndTimes****/
+
+.daterangepicker .applyBtn {
+    background: var(--primary-color);
+    border-color: var(--primary-color);
+    color: #fdfdfd;
+}
+
+    .daterangepicker .applyBtn:active, .daterangepicker .applyBtn:focus, .daterangepicker .applyBtn:hover {
+        background: var(--primary-color);
+        border-color: var(--primary-color);
+    }
+
+.daterangepicker .cancelBtn {
+    background: none;
+    border-color: var(--primary-color);
+}
+
+    .daterangepicker .cancelBtn:active, .daterangepicker .cancelBtn:focus, .daterangepicker .cancelBtn:hover {
+        background: none;
+        border-color: var(--primary-color);
+    }
+
+    .daterangeSelect.selected {
+        color: var(--primary-color);
+    }
+
+.displayDate .svg {
+    fill: var(--primary-color);
+}
+
+.daterangepicker td.active, .daterangepicker td.active:hover {
+	background-color: var(--primary-color);
+	border-color: transparent;
+	color: #fff;
+}
+
+/*********End DatesAndTimes****/
+
+/*********Events*************/
+
+.events-widget .flex-grid .gridItem .left-corner-wrapper-wide.gridItem-note, .events-widget .flex-grid .gridItem .left-corner-wrapper.gridItem-note {
+    background-color: var(--primary-color);
+    color: #ffffff;
+}
+
+.events-widget .gridItem .image-wrapper {
+	background-color: var(--events-background-color, black);
+}
+
+/*********End Events****/
+
+/*********Locations*************/
+
+svg.near-me {
+fill: var(--primary-color) !important;
+}
+
+svg.map-marker {
+fill: var(--primary-color);
+}
+
+.location__feedback a {
+	color: var(--primary-color);
+}
+
+.yourVoiceCounts a {
+	color: var(--primary-color);
+}
+
+.category__item.js-isSelected {
+    background: var(--secondary-color);
+}
+
+.contact__email .svg {
+    fill: var(--primary-color);
+}
+
+.item__allergens + .viewItem {
+    color: var(--primary-color);
+}
+
+.location__filter p:last-child .svg {
+    fill: var(--primary-color);
+}
+
+.location__filter .content-wrapper {
+    background: #fff;
+    border: 1px solid var(--primary-color);
+}
+
+.location__filters .allergen-wrapper {
+    background: #fff;
+    border-color: var(--primary-color);
+    float: right;
+}
+
+@media (min-width:768px) {
+    .location__filters .allergen-wrapper .content-wrapper {
+        border-color: var(--primary-color);
+    }
+}
+
+.location__filters .svg {
+    fill: var(--primary-color);
+}
+
+.location__map svg {
+    fill: var(--primary-color);
+}
+
+.location__sortLinks .dateSelect {
+    background: var(--primary-color);
+    color: #fff;
+}
+
+#clearMealCalculatorItems {
+    color: var(--primary-color);
+}
+
+#viewItemModal .svg {
+    fill: var(--primary-color);
+}
+
+.menu__item .mealCalculator .item__select .svg, .menu__item .mealCalculator .item__selected .svg {
+    fill: var(--primary-color);
+}
+
+.menu__item.js-isSelected {
+    background: rgba(0, 0, 0, 0.135);
+}
+
+#addressForm button.sort {
+	background: var(--primary-color);
+	color: #fff;
+}
+
+/*********End Locations*************/
+
+/*********Meal Plans*************/
+
+.gridItem .image-wrapper .noImage {
+  background-color: var(--primary-color);
+  height: 160px;
+  display: flex;
+  justify-content: center;
+  align-items: center; }
+
+.gridItem .image-wrapper .imageText {
+  font-size: 24px;
+  font-family: 'Roboto Slab', serif;
+  color: #ffffff;
+  margin: 1em;
+  line-height: normal;
+  font-weight: bold; }
+
+.mealplandetail__image .noImage {
+    background-color: var(--primary-color);
+    height: 160px;
+    display: flex;
+    justify-content: center;
+    align-items: center; } 
+
+/********End Meal Plans********************/
+
+/********Menu********************/
+
+.menu__item .mealCalculator .item__select .svg, .menu__item .mealCalculator .item__selected .svg {
+    fill: var(--primary-color);
+}
+
+.menu__item.js-isSelected {
+    background: rgba(0, 0, 0, 0.135);
+}
+
+.menu.daily button.js-active svg.heart {
+	fill: var(--primary-color);
+}
+
+.menu.daily .station-header {
+	border-color: var(--primary-color);
+}
+
+/********End Menu***************/
+
+/*********Navigation****************/
+
+@media (max-width:1200px) {
+    
+.navigation__mobileToggle + .navigation a {
+               color: inherit;
+               font-weight: 500;
+               background-color: var(--primary-color);
+}
+
+.navigation__mobileToggle + .navigation a:active, .navigation__mobileToggle + .navigation a:focus, .navigation__mobileToggle + .navigation a:hover {
+               background-color: var(--secondary-color);
+               color: #fff;
+}
+
+
+    .navigation__mobileToggle + .navigation a {
+        color: inherit;
+    }
+
+        .navigation__mobileToggle + .navigation a:active, .navigation__mobileToggle + .navigation a:focus, .navigation__mobileToggle + .navigation a:hover {
+            color: inherit;
+        }
+   
+}
+
+@media (max-width:992px) {
+    .navigation__mobileToggle + .navigation > li:hover {
+        background-color: var(--primary-color);
+    }
+
+    .navigation__mobileToggle + .navigation > li:last-child a.signIn {
+        background-color: var(--primary-color);
+    }
+}
+
+@media (max-width:992px) {
+    .navigation__mobileToggle + .navigation > li:hover {
+        background-color: var(--primary-color);
+    }
+
+    .navigation__mobileToggle + .navigation > li:last-child a.signIn {
+        background-color: var(--primary-color);
+    }
+}
+
+@media (min-width:1200px) {
+    .navigation__mobileToggle + .navigation > li a {
+        color: var(--primary-color);
+    }
+}
+
+        .navigation__submenu a:active, .navigation__submenu a:focus, .navigation__submenu a:hover {
+            color: inherit;
+            background-color: var(--primary-color);
+    }
+
+@media (min-width:1200px) {
+.header .primaryMenu a {
+    color: var(--primary-color) !important;
+}
+
+    .header .primaryMenu a:active, .header .primaryMenu a:focus, .header .primaryMenu a:hover {
+        color: var(--secondary-color) !important;
+    }
+}
+
+
+.header .primaryMenu .navigation__mobileToggle:after, .header .primaryMenu .navigation__mobileToggle:before {
+    background-color: var(--primary-color) !important;
+}
+
+/*********End Navigation**************/
+
+
+
+/*********News*************/
+
+.news-widget .flex-grid .gridItem .image-wrapper > .left-corner-wrapper.gridItem-note {
+    background-color: var(--primary-color);
+    color: #ffffff;
+}
+
+/*********End News****/
+
+
+
+/*********Alert Notifications**************/
+
+.alert-notifications .svg {
+    fill: var(--primary-color);
+}
+
+
+/*********End Alert Notifications**************/
+
+/******************************************/
+/************End Features*********************/
+/*****************************************/
+
+
+/******************************************/
+/************Global*********************/
+/*****************************************/
+
+/*************Main***********************/
+
+a {
+    color: var(--primary-color);
+}
+
+    a:active, a:focus, a:hover {
+        color: var(--secondary-color);
+    }
+
+.btn {
+    background: none;
+    color: var(--primary-color);
+}
+
+    .btn--solid, .btn.solid {
+        background: var(--primary-color);
+        color: #fdfdfd;
+    }
+
+        .btn--solid:focus, .btn--solid:hover, .btn.solid:focus, .btn.solid:hover {
+            background: var(--secondary-color);
+            color: #fdfdfd;
+        }
+
+
+/*************Main***********************/
+
+/*******Banner************/
+
+.banner .btn {
+    background: var(--primary-color);
+}
+
+.sitewide-banner { 
+     text-align: center; 
+     background: var(--primary-color);
+     color: #ffffff;
+} 
+
+/*******End Banner**********/
+
+/**********Footer*************/
+.footer {
+    background-color: var(--primary-color);
+    color: #ffffff;
+}
+
+/**********End Footer*************/
+
+
+/********** Header Top*************/
+
+svg.account-circle {
+fill: var(--primary-color);
+}
+
+svg.cart {
+fill: var(--primary-color);
+}
+
+svg.alert-notification {
+fill: var(--primary-color);
+}
+
+
+.headerTop a {
+	color: var(--primary-color);
+	font-weight: 600;
+}
+
+
+.headerTop a:active, .headerTop a:focus, .headerTop a:hover {
+	color: var(--secondary-color);
+}
+
+
+.header .primaryMenu .navigation__mobileToggle:after, .header .primaryMenu .navigation__mobileToggle:before {
+    background: var(--primary-color) !important;
+}
+
+.header .primaryMenu .navigation__mobileToggle span {
+	background: var(--primary-color);
+	border-radius: 6px;
+}
+
+/**********End Header Top*************/
+
+/**********Tabs*************/
+.tabList .tab {
+    background: var(--primary-color);
+    border-left-color: 1px solid #fff;
+    color: #fff;
+}
+
+/**********End Tabs*************/
+
+/********Close menu button******/
+
+.header .primaryMenu .navigation__mobileClose {
+    display: var(--display-close-button, none);
+}
+
+/******End Close menu button****/
+
+/******************************************/
+/************End Global*********************/
+/*****************************************/

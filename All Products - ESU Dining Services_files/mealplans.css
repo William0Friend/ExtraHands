@@ -1,0 +1,500 @@
+@import url("https://fonts.googleapis.com/css2?family=Roboto+Slab:wght@700&display=swap");
+@media screen and (min-width: 320px) {
+  .mealplan__details .category__item {
+    margin: 7px; } }
+
+@media (min-width: 768px) {
+  .mealplan__details .category__item {
+    float: left;
+    margin: 0 0.6em 2em !important;
+    width: 32% !important; } }
+
+.mealplan__details .mealplan__leftcolumn {
+  margin-left: 12%; }
+
+.mealplan__details .mealplan__option {
+  font-size: 22px;
+  margin-bottom: 5%; }
+
+.mealplan__details .mealplan__information {
+  margin-bottom: 6%;
+  padding: 1em; }
+  .mealplan__details .mealplan__information span {
+    font-weight: 600; }
+  .mealplan__details .mealplan__information .mealplan__contract {
+    margin-bottom: 12px; }
+
+.mealplan__details ul li {
+  padding-bottom: 8px; }
+  .mealplan__details ul li a {
+    margin-top: 5px; }
+
+.mealplan__fields {
+  margin-bottom: 1em; }
+  @media (min-width: 768px) {
+    .mealplan__fields .mealplan__firstName {
+      margin-top: 0; } }
+
+.mealplan__leftcolumn {
+  margin-left: 12%; }
+
+.mealplan__modelPlanHeader {
+  margin-bottom: 0px;
+  margin-top: 4px;
+  padding: 15px;
+  padding-bottom: 0px;
+  border-bottom: 0px; }
+
+.mealplan__option {
+  margin: 2em auto; }
+  @media (min-width: 768px) {
+    .mealplan__option {
+      margin-top: 0; } }
+  .mealplan__option h3 {
+    font-size: 22px;
+    margin-top: 0; }
+  .mealplan__option hr {
+    border-top: 1px solid #333; }
+  .mealplan__option .mealplans__emoji {
+    font-size: 49px;
+    display: block;
+    margin: auto auto;
+    margin-top: 40px;
+    width: 64px; }
+    .mealplan__option .mealplans__emoji img {
+      display: block;
+      margin: auto auto;
+      margin-top: 40px;
+      height: 64px;
+      width: 64px; }
+  .mealplan__option ul li {
+    padding-bottom: 8px; }
+    .mealplan__option ul li a {
+      margin-top: 5px;
+      padding: 0px !important; }
+
+.mealplans__category .mealplans__categoryImage img {
+  width: 100%; }
+
+.mealplans__category .mealplans__itemPrice {
+  font-size: 14px;
+  overflow: hidden;
+  padding: 0.5em 1em; }
+  .mealplans__category .mealplans__itemPrice span {
+    float: left; }
+  .mealplans__category .mealplans__itemPrice a {
+    float: right;
+    margin: 0; }
+
+.mealplans__categoryDescription {
+  text-align: left; }
+  .mealplans__categoryDescription ul {
+    list-style-type: disc;
+    padding-left: 32px; }
+
+.mealplans__categoryDetails {
+  text-align: left; }
+
+.mealplans__categoryItem {
+  padding: 0.5em; }
+  .mealplans__categoryItem .btn {
+    margin-bottom: 2em; }
+    @media (min-width: 768px) {
+      .mealplans__categoryItem .btn {
+        margin-bottom: 1em; } }
+
+.mealplans__categoryItems {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  width: 100%; }
+  .mealplans__categoryItems .mealplans__categoryItem {
+    float: left;
+    margin: 0 auto;
+    max-width: 300px;
+    width: 97%; }
+    @media (min-width: 486px) {
+      .mealplans__categoryItems .mealplans__categoryItem {
+        margin: 0 1.5%;
+        max-width: 100%;
+        width: 47%; } }
+    @media (min-width: 768px) {
+      .mealplans__categoryItems .mealplans__categoryItem {
+        width: 30%; } }
+
+.mealplans__details {
+    margin: 7px 7px 29px 7px;
+}
+  .mealplans__details button {
+    background: none;
+    border: 1px solid;
+    border-left: 2px solid;
+    border-radius: 4px;
+    border-right: 2px solid;
+    display: block;
+    font-weight: 600;
+    /*margin: 2em auto 0;*/
+    margin-bottom: 32px;
+    /*padding: 0.5em 3.5em;*/
+    max-width: 100%;
+    white-space: pre-wrap; }
+  .mealplans__details .btn:focus {
+    text-decoration: underline; }
+  .mealplans__details .mealplans__description {
+    margin-bottom: 33px; }
+  .mealplans__details .mealplans__emoji img {
+    display: block;
+    float: left;
+    margin: auto auto;
+    margin-right: 16px;
+    height: 64px;
+    width: 64px; }
+  .mealplans__details .mealplans__greatfood h4 {
+    font-size: 25px;
+    font-weight: 500;
+    padding-bottom: 20px; }
+  .mealplans__details .mealplans__greatfood h3 {
+    font-size: 32px;
+    font-weight: bold;
+    margin-top: 36px;
+    padding-bottom: 24px;
+    text-align: left; }
+  .mealplans__details h2 {
+    margin-top: 0px; }
+  .mealplans__details h3 {
+    font-size: 25px;
+    font-weight: 500;
+    padding-bottom: 20px; }
+  .mealplans__details hr {
+    border-top: 1px solid #333; }
+  .mealplans__details p {
+    padding-bottom: 20px; }
+  .mealplans__details .mealplan__staffDescription .mealplan__staffDetails {
+    margin-top: 12px; }
+    @media screen and (min-width: 1200px) {
+      .mealplans__details .mealplan__staffDescription .mealplan__staffDetails {
+        margin-top: 0px; } }
+    .mealplans__details .mealplan__staffDescription .mealplan__staffDetails .mealplan__staffMail {
+      margin-bottom: 0px; }
+    .mealplans__details .mealplan__staffDescription .mealplan__staffDetails .mealplan__staffName {
+      font-weight: bold; }
+    .mealplans__details .mealplan__staffDescription .mealplan__staffDetails .mealplan_staffPhone {
+      font-size: 14px;
+      font-weight: 600; }
+    .mealplans__details .mealplan__staffDescription .mealplan__staffDetails .mealplan__staffProfession {
+      font-size: 12px; }
+.mealplans__details .mealplans_categories h2 {
+    /*23464*/
+    font-size: 32px;
+    font-weight: bold;
+    margin-top: 36px;
+    margin-bottom: -19px;
+    padding-bottom: 0px;
+    text-align: left; }
+  .mealplans__details .mealplans_categories h3 {
+    font-size: 32px;
+    font-weight: bold;
+    margin-top: 36px;
+    padding-bottom: 0px;
+    text-align: left; }
+  .mealplans__details .mealplans_categories h4 {
+    color: #337ab7;
+    font-size: 28px;
+    margin-top: 36px;
+    text-align: left; }
+  .mealplans__details .mealplans_categories .mealplans__categoryDetails .mealplan_categoryNames {
+    color: #337ab7;
+    font-size: 28px;
+    margin-top: 28px;
+    text-align: left; }
+  .mealplans__details .mealplans_categories .mealplans__categoryDetails .mealplans_marketingShortDescription {
+    margin-top: 24px; }
+  .mealplans__details .mealplans_categories .mealplans_categoriesDescription {
+    margin-top: 24px;
+    text-align: left; }
+
+  .mealplans_compact_categories .mealplans__details .mealplans_categories .mealplans__categoryDetails .mealplan_categoryNames {
+    font-size: 16px;
+    font-weight: bold;
+    margin-top: 0px;
+  }
+
+.mealplans__information {
+  margin-bottom: 6%;
+  margin-top: 5%;
+  padding: 1em; }
+  .mealplans__information .mealplans__contract {
+    margin-bottom: 12px; }
+
+.mealplans__needmealPlan h3 {
+  color: #333;
+  margin-bottom: 24px;
+  margin-top: 40px; }
+
+.mealplans__needmealPlan p {
+  margin-bottom: 0px; }
+
+.modal-dialog {
+  left: auto; }
+  .modal-dialog .modal-footer {
+    padding-top: 0.5em; }
+
+.sidebar h3 {
+  color: #333;
+  font-size: 25px;
+  font-weight: 500;
+  /*margin: 0 0 1em*/ }
+
+.sidebar h2 {
+  /*23364*/
+  color: #333;
+  font-size: 25px;
+  font-weight: 500;
+  /*margin: 0 0 1em*/ }
+
+#viewItemModal .btn.outline {
+  font-size: 19px; }
+
+#ariaErrorsTempStorage {
+  display: none; }
+
+.mpOneColumn .raw:not(:first-child) {
+  border-top-width: 1px;
+  border-top-color: #000;
+  border-top-style: solid; }
+
+.mpOneColumn .raw .image-wrapper {
+  margin-top: 20px; }
+
+.mpOneColumn .raw .title-wrapper {
+  margin-bottom: 20px; }
+
+.mpOneColumn .raw .mealplan__audience {
+  margin-top: 20px;
+  color: #666; }
+
+.mpOneColumn .raw h3 {
+  color: #000; }
+
+.mpOneColumn .raw .price {
+  font-size: 30px;
+  color: #000;
+  font-weight: 700;
+  margin-bottom: 20px; }
+
+.mpOneColumn .raw .descriptionLine {
+  width: 100%;
+  display: flex; }
+  .mpOneColumn .raw .descriptionLine div {
+    width: 80%;
+    margin-left: 5px; }
+
+.gridItem a:active .image-wrapper, .gridItem a:focus .image-wrapper {
+  outline-width: 2px;
+  outline-style: solid; }
+
+.gridItem__border {
+    overflow: hidden;
+    border-radius: 4px;
+    border: 1px solid rgb(204, 204, 204);
+}
+
+.gridItem .gridItem__title {
+  background: none !important; }
+  .gridItem .image-wrapper {
+    border: 0px !important;}
+  .gridItem .gridItem__title a {
+    width: 100%; }
+    .gridItem .gridItem__title a.btn--outline {
+      margin-bottom: 0.5em; }
+    .gridItem .gridItem__title a.btn--solid {
+      margin-bottom: 0.5em; }
+    @media (min-width: 768px) and (max-width: 992px) {
+      .gridItem .gridItem__title a {
+        font-size: 12px !important; } }
+    .gridItem .gridItem__title a.empty-space {
+        height: 2.4em; }
+
+.gridItem .image-wrapper .noImage {
+    background-color: darkblue;
+    height: 160px;
+    display: flex;
+    justify-content: center;
+    align-items: center; }
+
+.gridItem .image-wrapper .imageText {
+  font-size: 24px;
+  font-family: 'Roboto Slab', serif;
+  color: #ffffff;
+  margin: 1em;
+  line-height: normal;
+  font-weight: bold; }
+
+@media screen and (min-width: 1200px) {
+  .productDescriptions {
+    margin-top: 0 !important; } }
+
+.productDescriptions .useIcons {
+  list-style: none;
+  padding-left: 0 !important; }
+  .productDescriptions .useIcons li {
+    padding-bottom: 8px; }
+    .productDescriptions .useIcons li img {
+      padding-right: 10px; }
+
+fieldset .submit {
+  margin-bottom: 32px; }
+
+.options-wrapper {
+  margin-bottom: 0.5em; }
+  .options-wrapper input {
+    display: none; }
+    .options-wrapper input:checked + .btn {
+      background: #232d4b;
+      color: #fff; }
+  .options-wrapper .option {
+    display: inline-block;
+    margin-right: 0.5em;
+    margin-top: 0.5em; }
+    .options-wrapper .option[aria-checked="true"] {
+      outline-width: 2px !important;
+      outline-offset: 1px;
+      outline-style: auto !important;
+      outline-color: #3277b3; }
+    .options-wrapper .option:focus {
+      outline-width: 1px;
+      outline-offset: 1px;
+      outline-style: dotted; }
+    .options-wrapper .option:last-child {
+      margin-right: 0; }
+  .options-wrapper .btn {
+    font-size: 14px;
+    margin: 0 0.25em;
+    padding: 0.25em 1.5em; }
+
+.mealPlanOptionCustom {
+  font-weight: 500;
+  margin-left: 0.5em;
+  display: inline-block; }
+  .mealPlanOptionCustom input {
+    border: 0px solid rgba(153, 153, 153, 0.54);
+    border-radius: 4px;
+    display: inline-block !important;
+    width: 110px;
+    padding: 0.5em 1em; }
+  .mealPlanOptionCustom input[type=radio] {
+    display: none !important; }
+  .mealPlanOptionCustom .input-wrapper {
+    display: inline-block; }
+
+.mealplan__audience h2 {
+  font-size: 26px;
+  margin-top: 0px; }
+
+.mealplan__audience h3 {
+  font-weight: 500;
+  margin-bottom: 29px; }
+
+.mealplan__audience h4 {
+  font-size: 16px;
+  font-weight: 700; }
+
+.mealplan__audience .mealplan__audienceDescription {
+  margin-bottom: 18px; }
+
+.mealplan__audience p {
+  margin-bottom: 32px; }
+
+.mealplan__disclaimer {
+  font-size: 14px;
+  margin-bottom: 0.5em; }
+
+@media screen and (min-width: 320px) {
+  .mealplan__details .category__item {
+    margin: 7px; } }
+
+@media (min-width: 768px) {
+  .mealplan__details .category__item {
+    float: left;
+    margin: 0 0.6em 2em !important;
+    width: 32% !important; } }
+
+.mealplan__details .mealplan__completeMealPlan {
+  margin-left: 25%;
+  padding: 1em;
+  text-align: center;
+  width: 50%; }
+  @media screen and (min-width: 320px) and (max-width: 760px) {
+    .mealplan__details .mealplan__completeMealPlan {
+      margin-left: 0;
+      width: 100%;
+      padding: 1em;
+      text-align: center; } }
+
+.mealplan__details .mealplan__leftcolumn {
+  margin-left: 12%; }
+
+.mealplan__details .mealplan__option {
+  font-size: 22px;
+  margin-bottom: 5%; }
+
+.mealplan__details .mealplan__information {
+  margin-bottom: 6%;
+  padding: 1em; }
+  .mealplan__details .mealplan__information span {
+    font-weight: 600; }
+  .mealplan__details .mealplan__information .mealplan__contract {
+    margin-bottom: 12px; }
+
+.mealplan__details ul li {
+  padding-bottom: 8px; }
+  .mealplan__details ul li a {
+    margin-top: 5px; }
+
+.mealplandetails__header h2 {
+  margin: 3em 0 0.75em;
+  padding: 0.33em 0.5em;
+  font-size: 26px; }
+
+.mealplandetails__formHeader {
+  font-size: 26px;
+  margin-top: 20px; }
+
+.mealplandetail__image {
+  text-align: center; }
+  .mealplandetail__image img {
+    margin-bottom: 31px;
+    max-width: 160px; }
+    @media screen and (min-width: 320px) {
+      .mealplandetail__image img {
+        width: 100%; } }
+    @media screen and (min-width: 768px) {
+      .mealplandetail__image img {
+        width: 100%; } }
+  .mealplandetail__image .noImage {
+    background-color: darkblue;
+    height: 160px;
+    display: flex;
+    justify-content: center;
+    align-items: center; }
+  .mealplandetail__image .imageText {
+    font-size: 24px;
+    font-family: 'Roboto Slab', serif;
+    color: #ffffff;
+    margin: 1em;
+    line-height: normal;
+    font-weight: bold; }
+
+.mealplandetail__variants {
+  padding-left: 0px;
+  display: inline-block; }
+  .mealplandetail__variants .input-wrapper {
+    display: inline-block; }
+
+.mealplans_details h2 {
+  color: #666;
+  font-size: 24px;
+  font-weight: 700;
+  line-height: 33px;
+  margin-top: 20px !important;
+  margin-bottom: 10px !important; }

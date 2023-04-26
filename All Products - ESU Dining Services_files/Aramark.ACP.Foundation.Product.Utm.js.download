@@ -1,0 +1,45 @@
+﻿function UtmManager() {
+	this.utmCookieNames = ["UtmMedium", "UtmSource", "UtmCampaign"];
+	this.utmQueryParamNames = ["utm_medium", "utm_source", "utm_campaign"];
+}
+
+UtmManager.prototype =
+{
+	getQueryParam: function (key) {
+		var query = window.location.href.slice(window.location.href.indexOf('?') + 1).split('&');
+		for (var i = 0; i < query.length; i++) {
+			var p = query[i].split('=');
+			if (p[0].toLowerCase() == key.toLowerCase()) {
+				return p[1];
+			}
+		}
+	},
+
+	saveQueryParamsToCookies: function () {
+		var instance = this;
+		for (var i = 0; i < instance.utmQueryParamNames.length; i++) {
+			var val = instance.getQueryParam(instance.utmQueryParamNames[i]);
+			if (val !== undefined) {
+				document.cookie = instance.utmCookieNames[i] + "=" + val + "; path=/";
+			}
+		}
+	},
+
+	getSavedUtmParams: function () {
+		var instance = this;
+		var result = {};
+		for (var i = 0; i < instance.utmCookieNames.length; i++) {
+			var value = GetCookieValue(instance.utmCookieNames[i]);
+			if (value) {
+				result[instance.utmCookieNames[i]] = value;
+			}
+		}
+
+		return result;
+	}
+};
+
+$(function () {
+	window.utmManager = window.utmManager || new UtmManager();
+	window.utmManager.saveQueryParamsToCookies();
+});

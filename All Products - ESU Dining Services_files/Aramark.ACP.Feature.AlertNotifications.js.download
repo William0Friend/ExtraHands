@@ -1,0 +1,61 @@
+﻿function AlertNotifications() {
+
+}
+
+AlertNotifications.prototype =
+{
+	init: function (settings) {
+		var me = this;
+		me._settings = settings;
+		setTimeout(function () { me._connectToHub(); }, 100);
+	},
+
+	refresh: function () {
+		var me = this;
+		$.post("/api/alert-notifications/list",
+			function (data) {
+				if (data) {
+					$(me._settings.alertNotificationPopupSelector).html(data);
+					var itemCount = parseInt($(me._settings.alertNotificationListSelector).data("item-count"));
+					var itemCountTitle = $(me._settings.alertNotificationListSelector).data("item-count-title");
+					$(me._settings.alertNotificationCountSelector).attr('aria-label', itemCountTitle);
+					if (!isNaN(itemCount) && itemCount > 0) {
+						$(me._settings.alertNotificationCountSelector).text(itemCount);
+						$(me._settings.alertNotificationCountSelector).show();
+						$(me._settings.alertNotificationCountSelector).attr("aria-hidden", "false");
+					}
+					else {
+						$(me._settings.alertNotificationCountSelector).text(itemCount);
+						$(me._settings.alertNotificationCountSelector).hide();
+						$(me._settings.alertNotificationCountSelector).attr("aria-hidden", "true");
+					}
+				}
+			});
+	},
+
+	linkAction: function (id, url) {
+		var me = this;
+		$.post("/api/alert-notifications/markAsRead",
+			{ id: id },
+			null,
+			'json').always(function () { window.location = url; });
+	},
+
+	_connectToHub: function () {
+		var me = this;
+		var proxy = $.connection[me._settings.hubName];
+		proxy.client.refreshAlertNotifications = function () {
+			setTimeout(function () { me.refresh(); }, 500);
+		};
+
+		$.connection.hub.start({ pingInterval: null }).done(function () {
+			console.log("SignalR connection successful");
+		}).fail(function (reason) {
+			console.log("SignalR connection failed: " + reason);
+		});
+	}
+
+};
+
+if (typeof (alertNotifications) === 'undefined')
+	var alertNotifications = new AlertNotifications();

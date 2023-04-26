@@ -1,0 +1,316 @@
+﻿window.gaEcommerce = window.gaEcommerce || {};
+
+(function (gaEcEnabled, $) {
+	var ANALYTICS_EVENTS = {
+		FORM_CATEGORY: 'Forms',
+		FILL_ACTION: 'Fill',
+		ACQUISITION_LABEL: 'Acquisition',
+		FIND_YOUR_FIT_LABEL: 'FindYourFit',
+		UX_CATEGORY: 'UX',
+		EXTERNAL_PURCHASE_CATEGORY: 'ExternalPurchase',
+		CLICK_ACTION: 'Click',
+		CLIENT_PORTAL_LABEL: 'ClientPortal',
+	};
+
+	var ecCommands = {
+		addProduct: 'ec:addProduct',
+		setAction: 'ec:setAction',
+		addImpression: 'ec:addImpression',
+	};
+
+	var actions = {
+		purchase: 'purchase',
+		checkout: 'checkout',
+		detail: 'detail',
+		add: 'add',
+		remove: 'remove',
+		click: 'click',
+	};
+
+	function _log(m) {
+		if (console && console.log && gaEcommerce.canLog) {
+			console.log(m);
+		}
+	}
+
+	function _getContext() {
+		return gaEcommerce.context || {};
+	}
+
+	function _isGaEnabled() {
+		return typeof (gaEcEnabled) !== 'undefined' && typeof (ga) !== 'undefined';
+	}
+
+	function _pluginAvailabilityCheck(plugins, name = 'ec') {
+		var isEnabled = Object.entries(plugins).some(function ([key, value]) {
+			if (Array.isArray(value)) {
+				_log(key, value);
+				return value.some(function (plugin) {
+					return plugin === name
+				});
+			}
+
+			return false;
+		});
+
+		_log("Plugin '" + name + "' is available!");
+		return isEnabled;
+    }
+
+	function _gaEc(trackers, command, itemOrAction, detail) {
+		if (!trackers.length) return;
+
+		trackers.forEach((tracker) => {
+			var name = tracker.get('name');
+			var key = name + '.' + command;
+
+			var isEcommerceEnabled = false;
+
+			if (tracker.hasOwnProperty('plugins_')) {
+				isEcommerceEnabled = _pluginAvailabilityCheck(tracker.plugins_);
+			}
+
+			if (!isEcommerceEnabled) {
+				ga(name + '.require', 'ec');
+			}
+
+			ga(key, itemOrAction, detail);
+			_log('[' + name + '] An event called: ' + command);
+		});
+    }
+
+	function _sendGaEc(command, itemOrAction, detail = null) {
+		if (!_isGaEnabled()) return;
+
+		if (typeof ga.getAll === 'undefined') {
+			$(window).on("load", function () {
+				var trackers = ga.getAll();
+				_gaEc(trackers, command, itemOrAction, detail);
+			});
+		}
+
+		if (typeof ga.getAll === 'function') {
+			var trackers = ga.getAll();
+			_gaEc(trackers, command, itemOrAction, detail);
+        }
+	}
+
+	function _gaProductAction(actionName) {
+		_sendGaEc(ecCommands.setAction, actionName);
+	}
+
+	function _addItem(item) {
+		_sendGaEc(ecCommands.addProduct,
+			{ // Provide product details in an productFieldObject.
+				'id': item.id, // Product ID (string).
+				'name': item.name, // Product name (string).
+				'category': item.category, // Product category (string).
+				'variant': item.variant, // Product variant (string).
+				'price': item.price, // Product price (number).
+				'quantity': item.quantity // Product quantity (number).
+			});
+	}
+	// For test
+	function _gaTestPurchaseProductAction() {
+		if (!_isGaEnabled()) return;
+
+		var items = [{
+			'id': 'testId',
+			'name': 'testName',
+			'category': 'testCategory',
+			'variant': 'testVariant',
+			'price': 1,
+			'quantity': 1,
+			'revenue': 1,
+			'tax': 1,
+			'shipping': 1,
+		}];
+		var host = 'testHost';
+
+		items.forEach(function (item) {
+			_addItem(item);
+
+			_sendGaEc(ecCommands.setAction, actions.purchase, {
+				'id': item.id,
+				'affiliation': host,
+				'revenue': item.revenue,
+				'tax': item.tax,
+				'shipping': item.shipping,
+			});
+		});
+	}
+
+	function _gaPurchaseProductAction() {
+		if (!_isGaEnabled()) return;
+
+		var items = _getContext().items;
+		var host = _getContext().host;
+
+		items.forEach(function(item) {
+			_addItem(item);
+
+			_sendGaEc(ecCommands.setAction, actions.purchase, { // Transaction details are provided in an actionFieldObject.
+				'id': item.id, // (Required) Transaction id (string).
+				'affiliation': host, // Affiliation (string).
+				'revenue': item.revenue, // Revenue (number).
+				'tax': item.tax, // Tax (number).
+				'shipping': item.shipping, // Shipping (number).
+			});
+		});
+	}
+
+	function _gaSendStep(step, option) {
+		if (!_isGaEnabled()) return;
+
+		var items = _getContext().items;
+		items.forEach(function(item) {
+			_addItem(item);
+
+			_sendGaEc(ecCommands.setAction, actions.checkout, {
+				'step': step,
+				'option': option
+			});
+		});
+	}
+
+	function _gaAddProduct(product) {
+		product = product || _getContext().product;
+
+		_sendGaEc(ecCommands.addProduct, product);
+	}
+	
+	function _gaAddImpression(item) {
+		_sendGaEc(ecCommands.addImpression, item);
+	}
+
+	$.extend(gaEcommerce, {
+		gaProductDetailAction: function (product) {
+			_log("gaProductDetailAction");
+			_gaAddProduct(product);
+			_gaProductAction(actions.detail);
+		},
+
+		gaAddToCartAction: function (product) {
+			_log("gaAddToCartAction");
+			_gaAddProduct(product);
+			_gaProductAction(actions.add);
+		},
+
+		gaRemoveFromCart: function(productId) {
+			_log("gaRemoveProduct");
+			var items = _getContext().items;
+			var products = items.filter(function(p) {
+				return p.id == productId;
+			});
+			if (products.length) {
+				_gaAddProduct(products[0]);
+				_gaProductAction(actions.remove);	
+			}
+		},
+
+		gaPurchaseProductAction: function() {
+			_log("gaPurchaseProductAction");
+
+			if (this.isTest) {
+				_gaTestPurchaseProductAction();
+				return
+			}
+			_gaPurchaseProductAction();
+
+			if (_isGaEnabled()) {
+				ga("send", "pageview");
+				ga("newTracker.send", "pageview");
+			}
+		},
+
+		gaSendStep: function(step, option) {
+			_log("gaSendStep");
+			_gaSendStep(step, option);
+		},
+
+		gaAddImpression: function(item) {
+			_log("gaAddImpression");
+			_gaAddImpression(item);
+		},
+		
+		gaAddProduct: function(product) {
+			_log("gaAddProduct");
+			_gaAddProduct(product);
+			_gaProductAction(actions.click, { 'list': product.category });
+		},
+
+		//event:
+		//	eventCategory,
+		//	eventAction,
+		//	eventLabel,
+		//	eventValue
+		gaSendEvent: function (eventData, eventName = 'untitled event') {
+			if (!_isGaEnabled()) return;
+			var trackers = ga.getAll();
+
+			if (!trackers.length) return;
+
+			trackers.forEach((tracker) => {
+				var name = tracker.get('name');
+
+				tracker.send({
+					hitType: 'event',
+					hitCallback: function () {
+						_log('[' + name + '] An event called: ' + eventName);
+					},
+					...eventData,
+				})
+			});
+		},
+
+		gaSendEventUXClick: function (eventLabel) {
+			if (!_isGaEnabled()) return;
+			this.gaSendEvent({
+				eventCategory: ANALYTICS_EVENTS.UX_CATEGORY,
+				eventAction: 'click',
+				eventLabel: eventLabel,
+				eventValue: null
+			}, 'gaSendEventUXClick');
+		},
+
+		gaExternalPurchaseEvent: function () {
+			if (!_isGaEnabled()) return;
+			this.gaSendEvent({
+				eventCategory: ANALYTICS_EVENTS.EXTERNAL_PURCHASE_CATEGORY,
+				eventAction: ANALYTICS_EVENTS.CLICK_ACTION,
+				eventLabel: ANALYTICS_EVENTS.CLIENT_PORTAL_LABEL,
+				eventValue: null
+			}, 'gaExternalPurchaseEvent');
+		},
+
+		gaAcquisitionFormEvent: function () {
+			if (!_isGaEnabled()) return;
+			this.gaSendEvent({
+				eventCategory: ANALYTICS_EVENTS.FORM_CATEGORY,
+				eventAction: ANALYTICS_EVENTS.FILL_ACTION,
+				eventLabel: ANALYTICS_EVENTS.ACQUISITION_LABEL,
+				eventValue: null
+			}, 'gaAcquisitionFormEvent');
+		},
+
+		gaFindYourFitEvent: function () {
+			if (!_isGaEnabled()) return;
+			this.gaSendEvent({
+				eventCategory: ANALYTICS_EVENTS.FORM_CATEGORY,
+				eventAction: ANALYTICS_EVENTS.FILL_ACTION,
+				eventLabel: ANALYTICS_EVENTS.FIND_YOUR_FIT_LABEL,
+				eventValue: null
+			}, 'gaFindYourFitEvent');
+		},
+
+		gaPurchasingSteps: {
+			'ReviewCart': 1,
+			'Fulfillment': 2,
+			'Payment': 3,
+			'Review': 4
+		}, 
+
+		canLog: !!gaEcommerce.canLog,
+		isTest: false
+	});
+}(window.gaEcEnabled, window.jQuery));

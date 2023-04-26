@@ -1,0 +1,198 @@
+﻿function setCheckboxValue(checkbox, checked) {
+	var $thisCheckBox = $(checkbox);
+	var elem = $thisCheckBox.closest(".checkbox-wrapper.switch.switch--circle");
+	$thisCheckBox.prop("checked", checked);
+	$(elem).attr("aria-checked", checked);
+	$thisCheckBox.val(checked ? 'yes' : '');
+	$(elem).find(".toggle-text").text(checked ? $(elem).data("text-checked") : $(elem).data("text-unchecked"));
+}
+
+$.fn.addHandlersToCustomInputs = function () {
+
+	$(".checkbox-wrapper.switch.switch--circle input").attr("autocomplete", "off");
+
+    //Checkbox
+	$(".checkbox-wrapper.switch.switch--circle").unbind("keypress");
+    $(".checkbox-wrapper.switch.switch--circle").bind("keypress", function (e) {
+        if (/*e.key === 13 || e.key === 'Enter' | */e.key === ' ' || e.key === 'Spacebar') {
+            e.preventDefault();
+
+            $thisCheckBox = $(this).find("input[type=checkbox]");
+            var checked = $thisCheckBox.prop("checked");
+			setCheckboxValue($thisCheckBox, !checked);
+        }
+	});
+		
+    //Checkbox - click
+	$(".checkbox-wrapper.switch.switch--circle").unbind("click");
+	$(".checkbox-wrapper.switch.switch--circle").bind("click", function (e) {
+		$thisCheckBox = $(this).find("input[type=checkbox]");
+		if (e.target) {
+			var rootLabel = $(e.target).closest("label");
+			if (!rootLabel.length && e.target.tagName !== "INPUT") {
+				var checked = $thisCheckBox.prop("checked");
+				$thisCheckBox.prop("checked", !checked);
+			}
+		}
+		var checkedAfterAction = $thisCheckBox.prop("checked");
+		setCheckboxValue($thisCheckBox, checkedAfterAction);
+	});
+
+	$(".options-wrapper[data-type='selectOne'] .option input").attr("autocomplete", "off");
+
+    //Select One - click
+	$(".options-wrapper[data-type='selectOne'] .option").unbind("click");
+	$(".options-wrapper[data-type='selectOne'] .option").bind("click", function (e) {
+        var allOptions = $(this).parent().children('.option');
+        allOptions.attr("aria-checked", false);
+        allOptions.attr("tabindex", -1);
+        $(this).parent().find('.option input[type=number], input[type=text]').attr("tabindex", -1);
+        $thisRadio = $(this).find("input[type=radio]");
+        $thisRadio.prop("checked", true);
+        $(this).attr("aria-checked", true);
+        $(this).attr("tabindex", 0);
+        //enable tab for text and numeric inputs
+		$(this).find('input[type = number], input[type = text]').attr("tabindex", 0);
+		//reset value of custom value element
+		var customValueElement = $(this).closest(".options-with-custom-value-wrapper").find(".custom-value");
+		if ($(customValueElement).length) {
+			$(customValueElement).val("");
+			$(customValueElement).valid();
+		}
+	});
+
+	$(".options-with-custom-value-wrapper .custom-value").unbind("input propertychange");
+	$(".options-with-custom-value-wrapper .custom-value").bind("input propertychange", function () {
+		var options = $(this).closest(".options-with-custom-value-wrapper").find(".options-wrapper[data-type='selectOne'] .option");
+		options.find("input:radio").prop("checked", false);
+		options.attr("aria-checked", false);
+	});
+
+    //Select One - unselected
+	$(".options-wrapper[data-type='selectOne'] div, .options-wrapper[data-type='selectOne'] li").unbind("keypress");
+	$(".options-wrapper[data-type='selectOne'] div, .options-wrapper[data-type='selectOne'] li").bind("keypress", function (e) {
+        if (/*e.key === 13 || e.key === 'Enter' | */e.key === ' ' || e.key === 'Spacebar') {
+            e.preventDefault();
+
+            if ($(this).attr("tabindex") === 0) {
+				$thisRadio = $(this).find("input[type=radio], input[data-type=radio], a[data-type=radio]");
+				$thisRadio.trigger("click");
+                $thisRadio.prop("checked", true);
+                $(this).attr("aria-checked", true);
+            }
+        }
+    });
+
+    //Select One - arrows
+	$(".options-wrapper[data-type='selectOne'] div, .options-wrapper[data-type='selectOne'] li").unbind("keydown");
+	$(".options-wrapper[data-type='selectOne'] div, .options-wrapper[data-type='selectOne'] li").bind("keydown", function (e) {
+		if (e.key === 38 || e.key === 'ArrowUp' || e.key === 40 || e.key === 'ArrowDown'
+			|| e.key === 37 || e.key === 'ArrowLeft' || e.key === 39 || e.key === 'ArrowRight') {
+            e.preventDefault();
+            var allOptions = $(this).parent().children('.option');
+            var count = allOptions.length;
+
+            if (count > 0) {
+				var allOtherInputs = $(this).parent().find('.option input[type=number], input[type=text]');
+				var currentNumberInput = $(document.activeElement).find('input[type=number]');
+				var currentNumber = parseFloat(currentNumberInput.val());
+				if (isNaN(currentNumber)) {
+					currentNumber = 0;
+				}
+				var maxValue = parseFloat(currentNumberInput.attr("max"));
+				if (isNaN(maxValue)) {
+					maxValue = 1000;
+				}
+				var minValue = parseFloat(currentNumberInput.attr("min"));
+				if (isNaN(minValue)) {
+					minValue = 1;
+				}
+				var skipMoving = false;
+                var index = allOptions.index(this);
+                //last -> first
+                var nextElementIndex = 0;
+
+				//up
+				if (((e.key === 38 || e.key === 'ArrowUp') && currentNumberInput.length === 0) || e.key === 37 || e.key === 'ArrowLeft') {
+					//first -> last
+					if (index === 0) {
+						nextElementIndex = count - 1;
+					}
+					//any -> previous
+					else {
+						nextElementIndex = index - 1;
+					}
+				} //down
+				else if (((e.key === 40 || e.key === 'ArrowDown') && currentNumberInput.length === 0) || e.key === 39 || e.key === 'ArrowRight') {
+					//any -> next
+					if (index !== count - 1) {
+						nextElementIndex = index + 1;
+					}
+				} else if ((e.key === 38 || e.key === 'ArrowUp') && currentNumberInput.length > 0) {
+					skipMoving = true;
+					if ((currentNumber + 1) <= maxValue) {
+						currentNumberInput.val(currentNumber + 1);
+					}
+				} else if ((e.key === 40 || e.key === 'ArrowDown') && currentNumberInput.length > 0) {
+					skipMoving = true;
+					if ((currentNumber - 1) >= minValue) {
+						currentNumberInput.val(currentNumber - 1);
+					} else {
+						currentNumberInput.val(currentNumber);
+					}
+				}
+				if (!skipMoving) {
+					allOptions.attr("aria-checked", false);
+					allOptions.attr("tabindex", -1);
+					allOtherInputs.attr("tabindex", -1);
+					var elem = allOptions.eq(nextElementIndex);
+					var radio = elem.find("input[type=radio]");
+					radio.prop("checked", true);
+					elem.attr("aria-checked", true);
+					elem.attr("tabindex", 0);
+
+					//enable tab for text and numeric inputs
+					elem.find("input[type=number], input[type=text]").attr("tabindex", 0);
+					elem.focus();
+				}
+            }
+		}
+
+		var numberInput = $(this).find("input[type=number]");
+		if (numberInput.length > 0 && e.key >= 0 && e.key <= 9 && !($(document.activeElement).is('input[type=number]'))) {
+			numberInput.val("").focus();
+		}
+    });
+
+    //remove tabindex after navigating out of numeric input
+	$(".options-wrapper[data-type='selectOne'] input[type=number]").unbind("blur");
+	$(".options-wrapper[data-type='selectOne'] input[type=number]").bind("blur", function (e) {
+        $(this).attr("tabindex", -1);
+    });
+
+	$(".options-wrapper[data-type='selectMany'] .option input").attr("autocomplete", "off");
+
+    //Select Many
+	$(".options-wrapper[data-type='selectMany'] .option").unbind("keypress");
+	$(".options-wrapper[data-type='selectMany'] .option").bind("keypress", function (e) {
+        if (/*e.key === 13 || e.key === 'Enter' | */e.key === ' ' || e.key === 'Spacebar') {
+            e.preventDefault();
+
+            $thisCheckBox = $(this).find("input[type=checkbox]");
+            var checked = $thisCheckBox.prop("checked");
+            $thisCheckBox.prop("checked", !checked);
+            $(this).attr("aria-checked", !checked);
+        }
+    });
+
+    //Select Many - click
+	$(".options-wrapper[data-type='selectMany'] .option").unbind("click");
+	$(".options-wrapper[data-type='selectMany'] .option").bind("click", function (e) {
+        $thisCheckBox = $(this).find("input[type=checkbox]");
+        var checked = $thisCheckBox.prop("checked");
+        $thisCheckBox.prop("checked", !checked);
+        $(this).attr("aria-checked", !checked);
+	});
+
+
+}

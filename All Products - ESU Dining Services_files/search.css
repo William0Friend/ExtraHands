@@ -1,0 +1,94 @@
+.search-wrapper {
+  margin: 1em auto;
+  max-width: 150px;
+  padding: 4px 4px 4px 8px; }
+  @media (min-width: 992px) {
+    .search-wrapper {
+      margin: 0;
+      max-width: 100%; } }
+
+div.search {
+  text-align: center; }
+  div.search button[type="submit"] {
+    background: none;
+    border: 0;
+    padding: 0;
+    position: absolute;
+    right: 0.25em;
+    top: 45%;
+    transform: translateY(-50%); }
+  div.search form {
+    display: inline-block;
+    position: relative;
+    text-align: left; }
+  div.search input {
+    border: none;
+    padding: 0.5em 2.5em 0.5em 0.5em; }
+    div.search input.border {
+      border: rgba(153, 153, 153, 0.54) 1px solid; }
+  div.search .svg {
+    height: 32px;
+    margin-left: 0.25em;
+    width: 32px; }
+
+.search .media-left img {
+  width: 100px; }
+  @media (min-width: 992px) {
+    .search .media-left img {
+      margin: 0;
+      width: 160px; } }
+
+.search em {
+  font-weight: bold; }
+
+input.search {
+  border: 0;
+  max-width: 100px;
+  outline: none;
+  transition: 0.3s ease-in-out; }
+  @media (min-width: 992px) {
+    input.search {
+      max-width: 150px; } }
+  @media (min-width: 1200px) {
+    input.search {
+      max-width: 200px; } }
+  input.search + label {
+    cursor: pointer;
+    height: 1.5em;
+    margin: 0;
+    width: 1.5em; }
+    input.search + label:before {
+      background-image: url("/Feature/Search/assets/images/magnify.svg");
+      background-position: center;
+      background-repeat: no-repeat;
+      background-size: cover;
+      content: '';
+      display: inline-block;
+      height: 100%;
+      margin-right: 0.25em;
+      vertical-align: middle;
+      width: 100%; }
+
+.footer .search {
+  margin-top: 1em; }
+  @media (min-width: 992px) {
+    .footer .search {
+      margin: 0;
+      position: absolute;
+      right: 0;
+      top: 50%;
+      transform: translateY(-50%); } }
+  .footer .search form {
+    margin: 0; }
+  .footer .search input {
+    min-width: 250px;
+    color: black; }
+    @media (min-width: 768px) {
+      .footer .search input {
+        min-width: 300px; } }
+    @media (min-width: 992px) {
+      .footer .search input {
+        min-width: 100%; } }
+
+.locationsearchitem .location__address {
+  padding-bottom: 10px; }

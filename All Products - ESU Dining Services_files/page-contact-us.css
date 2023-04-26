@@ -1,0 +1,14 @@
+.contact__email {
+  margin: 0.25em 0; }
+
+.contact__name {
+  font-weight: 600; }
+
+.contactList a {
+  display: block;
+  overflow-wrap: break-word;
+  word-wrap: break-word; }
+
+@media (min-width: 768px) {
+  .contactList li {
+    width: 47%; } }

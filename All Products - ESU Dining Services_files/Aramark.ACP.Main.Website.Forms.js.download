@@ -1,0 +1,122 @@
+﻿(function ($) {
+    //* Toggle Password Display
+    $('body').on('click', '.js-toggle-password',
+        function () {
+            if ($(this).hasClass('js-hide-password')) {
+                $(this).addClass('js-show-password').removeClass('js-hide-password').text('Hide');
+                $(this).parent().prev().attr('type', 'text');
+            } else {
+                $(this).addClass('js-hide-password').removeClass('js-show-password').text('Show');
+                $(this).parent().prev().attr('type', 'password');
+            }
+        });
+
+    //* Validate on change or keyup
+    $('body').on('change, keyup',
+        '.js-error input, .js-error textarea, .js-error select',
+        function () {
+            var type = $(this).attr('type');
+            var val = $(this).val();
+            var validate = false;
+
+            switch (type) {
+                case 'email':
+                    if (val.split('@').length == 2 && val.split('.').length > 0) {
+                        validate = true;
+                    }
+                    break;
+                default:
+                    if (val.length > 0) {
+                        validate = true;
+                    }
+                    break;
+            }
+
+            if (validate == true) {
+                $(this).parent().removeClass('js-error').addClass('js-success');
+            } else {
+                $(this).parent().removeClass('js-success').addClass('js-error');
+            }
+        });
+
+    $.fn.disableElement = function() {
+	    $(this).attr("disabled", "disabled").find("input").attr("disabled", "disabled");
+	    return this;
+    }
+
+    $.fn.enableElement = function() {
+	    $(this).removeAttr("disabled").find("input").attr("disabled");
+	    return this;
+    }
+
+})(jQuery);
+
+function clearValidationClasses(element) {
+    var el = $(element);
+    var parent = el.closest('.input-wrapper, .checkbox-wrapper, .select-wrapper');
+
+    parent.removeClass('js-error').removeClass('js-success');
+}
+function valError(element) {
+    var el = $(element);
+    var parent = el.closest('.input-wrapper, .checkbox-wrapper, .select-wrapper');
+
+    parent.removeClass('js-success');
+    parent.addClass('js-error');
+}
+function valSuccess(element) {
+    var el = $(element);
+    var parent = el.closest('.input-wrapper, .checkbox-wrapper, .select-wrapper');
+
+    parent.removeClass('js-error');
+    parent.addClass('js-success');
+}
+
+function addValidationToFormInputs() {
+    var inputs = $('body main :input:not(:checkbox):not(:button):not(:submit):not(:hidden):not(#daterange):not(#singledatepicker):not(.itemQuantity):not(.skip-form-validation)');
+    inputs.each(function () {
+        var $element = $(this);
+        if ($element) {
+            $element.focusout(function () {
+
+	            if (!$element.length || !$element[0].form) return;
+
+                var isValid = $element.valid();
+                if (isValid == true) {
+                    valSuccess($element);
+                } else {
+                    valError($element);
+                }
+            });
+            $element.keyup(function () {
+                clearValidationClasses($element);
+            });
+        }
+    });
+}
+
+//Added handler for all form inputs as a temprorary solution for inline validaiton
+$(addValidationToFormInputs);
+
+function GetCookieValue(key) {
+	var result = key ? undefined : {};
+
+	// To prevent the for loop in the first place assign an empty array
+	// in case there are no cookies at all. Also prevents odd result when
+	// calling $.cookie().
+	var cookies = document.cookie ? document.cookie.split('; ') : [];
+
+	for (var i = 0, l = cookies.length; i < l; i++) {
+		var parts = cookies[i].split('=');
+		var name = decodeURIComponent(parts.shift());
+		var cookie = parts.join('=');
+
+		if (key && key === name) {
+			// If second argument (value) is a function it's a converter...
+			result = cookie;
+			break;
+		}
+	}
+
+	return result;
+}
